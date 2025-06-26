@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'screens/login_screen.dart';
+import 'screens/home_screen.dart';
 import 'screens/map_screen.dart';
-import 'screens/events_screen.dart';
+import 'screens/skateparks_screen.dart';
 import 'screens/profile_screen.dart';
 
 void main() {
@@ -14,11 +16,15 @@ class SkateApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Skate Spots',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
         useMaterial3: true,
       ),
-      home: const MainScreen(),
+      home: const LoginScreen(),
+      routes: {
+        '/main': (context) => const MainScreen(),
+      },
     );
   }
 }
@@ -34,8 +40,9 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   
   final List<Widget> _screens = [
+    const HomeScreen(),
     const MapScreen(),
-    const EventsScreen(),
+    const SkateparksScreen(),
     const ProfileScreen(),
   ];
 
@@ -50,14 +57,19 @@ class _MainScreenState extends State<MainScreen> {
             _currentIndex = index;
           });
         },
+        type: BottomNavigationBarType.fixed,
         items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Início',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.map),
             label: 'Pistas',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.event),
-            label: 'Eventos',
+            icon: Icon(Icons.skateboarding),
+            label: 'Pistas',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
