@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/image_generator.dart';
 
 class SkateparksScreen extends StatelessWidget {
   const SkateparksScreen({super.key});
@@ -15,6 +16,7 @@ class SkateparksScreen extends StatelessWidget {
         'hours': '8h às 22h',
         'features': ['Bowl', 'Street', 'Half-pipe', 'Corrimão'],
         'description': 'Pista completa no centro da cidade com estruturas variadas para todos os níveis.',
+        'image': 'assets/images/skateparks/skatepark_central.jpg',
       },
       {
         'name': 'Bowl da Liberdade',
@@ -25,6 +27,7 @@ class SkateparksScreen extends StatelessWidget {
         'hours': '6h às 20h',
         'features': ['Bowl', 'Mini Ramp'],
         'description': 'Bowl clássico perfeito para manobras aéreas e transições suaves.',
+        'image': 'assets/images/skateparks/bowl_liberdade.jpg',
       },
       {
         'name': 'Pista do Ibirapuera',
@@ -35,6 +38,7 @@ class SkateparksScreen extends StatelessWidget {
         'hours': '7h às 18h',
         'features': ['Vert', 'Street', 'Escadas'],
         'description': 'Localizada no parque, ideal para sessões ao ar livre com vista incrível.',
+        'image': 'assets/images/skateparks/pista_ibirapuera.jpg',
       },
       {
         'name': 'Skate Plaza Vila Madalena',
@@ -45,6 +49,7 @@ class SkateparksScreen extends StatelessWidget {
         'hours': '24h',
         'features': ['Plaza', 'Escadas', 'Corrimão', 'Gaps'],
         'description': 'Plaza urbana com obstáculos técnicos para street skating avançado.',
+        'image': 'assets/images/skateparks/skate_plaza_vila_madalena.jpg',
       },
     ];
 
@@ -76,72 +81,93 @@ class SkateparksScreen extends StatelessWidget {
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: () => _showParkDetails(context, park),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            park['name'] as String,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            park['type'] as String,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      park['description'] as String,
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 14,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Imagem da pista
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    child: Container(
+                      height: 160,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                      child: _buildParkImage(
+                        park['image'] as String,
+                        parkName: park['name'] as String,
+                        parkType: park['type'] as String,
+                      ),
                     ),
-                    const SizedBox(height: 12),
-                    Row(
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.location_on, size: 16, color: Colors.grey),
-                        const SizedBox(width: 4),
-                        Text(
-                          park['distance'] as String,
-                          style: const TextStyle(color: Colors.grey),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                park['name'] as String,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                park['type'] as String,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 16),
-                        const Icon(Icons.star, size: 16, color: Colors.amber),
-                        const SizedBox(width: 4),
+                        const SizedBox(height: 8),
                         Text(
-                          park['rating'].toString(),
-                          style: const TextStyle(fontWeight: FontWeight.w500),
+                          park['description'] as String,
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 14,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const Spacer(),
-                        const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                            const SizedBox(width: 4),
+                            Text(
+                              park['distance'] as String,
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                            const SizedBox(width: 16),
+                            const Icon(Icons.star, size: 16, color: Colors.amber),
+                            const SizedBox(width: 4),
+                            Text(
+                              park['rating'].toString(),
+                              style: const TextStyle(fontWeight: FontWeight.w500),
+                            ),
+                            const Spacer(),
+                            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                          ],
+                        ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           );
@@ -179,6 +205,20 @@ class SkateparksScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
+                // Imagem da pista no modal
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    height: 200,
+                    width: double.infinity,
+                    child: _buildParkImage(
+                      park['image'] as String,
+                      parkName: park['name'] as String,
+                      parkType: park['type'] as String,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -288,6 +328,41 @@ class SkateparksScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildParkImage(String imagePath, {String? parkName, String? parkType}) {
+    // Tenta carregar a imagem do asset primeiro
+    return Image.asset(
+      imagePath,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        // Se não encontrar a imagem, usa o gerador de placeholder
+        if (parkName != null && parkType != null) {
+          return ImageGenerator.generateParkImage(parkName, parkType);
+        }
+        return Container(
+          color: Colors.grey.shade300,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.skateboarding,
+                size: 40,
+                color: Colors.grey.shade600,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Imagem não encontrada',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
