@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../utils/image_generator.dart';
 
 class SkateparksScreen extends StatelessWidget {
   const SkateparksScreen({super.key});
@@ -8,48 +7,37 @@ class SkateparksScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final skateparks = [
       {
-        'name': 'Skatepark Central',
+        'name': 'Skate City',
         'type': 'Street',
         'distance': '1.2 km',
         'rating': 4.5,
-        'address': 'Av. Paulista, 1000',
+        'address': 'Centro da cidade',
         'hours': '8h às 22h',
         'features': ['Bowl', 'Street', 'Half-pipe', 'Corrimão'],
         'description': 'Pista completa no centro da cidade com estruturas variadas para todos os níveis.',
-        'image': 'assets/images/skateparks/skatepark_central.jpg',
+        'images': ['assets/images/skateparks/SkateCity.png', 'assets/images/skateparks/SkateCity2.png'],
       },
       {
-        'name': 'Bowl da Liberdade',
+        'name': 'Rajas Skatepark',
         'type': 'Bowl',
         'distance': '2.5 km',
         'rating': 4.8,
-        'address': 'R. da Liberdade, 500',
+        'address': 'Zona Sul',
         'hours': '6h às 20h',
         'features': ['Bowl', 'Mini Ramp'],
         'description': 'Bowl clássico perfeito para manobras aéreas e transições suaves.',
-        'image': 'assets/images/skateparks/bowl_liberdade.jpg',
+        'images': ['assets/images/skateparks/Rajas1.png', 'assets/images/skateparks/Rajas2.png'],
       },
       {
-        'name': 'Pista do Ibirapuera',
-        'type': 'Vert',
+        'name': 'Quadespra',
+        'type': 'Plaza',
         'distance': '3.1 km',
         'rating': 4.2,
-        'address': 'Parque Ibirapuera',
+        'address': 'Zona Norte',
         'hours': '7h às 18h',
-        'features': ['Vert', 'Street', 'Escadas'],
-        'description': 'Localizada no parque, ideal para sessões ao ar livre com vista incrível.',
-        'image': 'assets/images/skateparks/pista_ibirapuera.jpg',
-      },
-      {
-        'name': 'Skate Plaza Vila Madalena',
-        'type': 'Plaza',
-        'distance': '4.0 km',
-        'rating': 4.6,
-        'address': 'Vila Madalena',
-        'hours': '24h',
-        'features': ['Plaza', 'Escadas', 'Corrimão', 'Gaps'],
+        'features': ['Plaza', 'Street', 'Escadas'],
         'description': 'Plaza urbana com obstáculos técnicos para street skating avançado.',
-        'image': 'assets/images/skateparks/skate_plaza_vila_madalena.jpg',
+        'images': ['assets/images/skateparks/image2.png', 'assets/images/skateparks/image9.png'],
       },
     ];
 
@@ -84,20 +72,13 @@ class SkateparksScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Imagem da pista
+                  // Carrossel de imagens da pista
                   ClipRRect(
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                     child: Container(
                       height: 160,
                       width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                      ),
-                      child: _buildParkImage(
-                        park['image'] as String,
-                        parkName: park['name'] as String,
-                        parkType: park['type'] as String,
-                      ),
+                      child: _buildImageCarousel(park['images'] as List<String>),
                     ),
                   ),
                   Padding(
@@ -205,17 +186,13 @@ class SkateparksScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Imagem da pista no modal
+                // Carrossel de imagens da pista no modal
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
                     height: 200,
                     width: double.infinity,
-                    child: _buildParkImage(
-                      park['image'] as String,
-                      parkName: park['name'] as String,
-                      parkType: park['type'] as String,
-                    ),
+                    child: _buildImageCarousel(park['images'] as List<String>),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -331,36 +308,36 @@ class SkateparksScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildParkImage(String imagePath, {String? parkName, String? parkType}) {
-    // Tenta carregar a imagem do asset primeiro
-    return Image.asset(
-      imagePath,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) {
-        // Se não encontrar a imagem, usa o gerador de placeholder
-        if (parkName != null && parkType != null) {
-          return ImageGenerator.generateParkImage(parkName, parkType);
-        }
-        return Container(
-          color: Colors.grey.shade300,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.skateboarding,
-                size: 40,
-                color: Colors.grey.shade600,
+  Widget _buildImageCarousel(List<String> images) {
+    return PageView.builder(
+      itemCount: images.length,
+      itemBuilder: (context, index) {
+        return Image.asset(
+          images[index],
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              color: Colors.grey.shade300,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.skateboarding,
+                    size: 40,
+                    color: Colors.grey.shade600,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Imagem não encontrada',
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                'Imagem não encontrada',
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
