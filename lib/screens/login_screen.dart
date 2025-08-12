@@ -39,9 +39,14 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - 48,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                 const Icon(
                   Icons.skateboarding,
                   size: 80,
@@ -202,7 +207,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/register');
+                  },
                   child: Text(
                     'Não tem conta? Cadastre-se',
                     style: TextStyle(
@@ -211,7 +218,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-              ],
+                ],
+                ),
+              ),
             ),
           ),
         ),
