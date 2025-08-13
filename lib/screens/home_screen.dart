@@ -3,14 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
 class HomeScreen extends StatefulWidget {
-  final bool isDarkMode;
-  final Function(bool) onThemeChanged;
-
-  const HomeScreen({
-    super.key,
-    required this.isDarkMode,
-    required this.onThemeChanged,
-  });
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -256,14 +249,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                         const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            const Icon(Icons.calendar_today,
-                                color: Colors.white70, size: 16),
-                            const SizedBox(width: 6),
-                            Text(event['date'] as String,
-                                style: const TextStyle(color: Colors.white70)),
-                          ],
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Color(0xFF38888D2), Color(0xFF043C70)],
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.calendar_today, color: Colors.white, size: 16),
+                              const SizedBox(width: 6),
+                              Text(event['date'] as String, style: const TextStyle(color: Colors.white)),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Row(
