@@ -27,12 +27,12 @@ class _SkateAppState extends State<SkateApp> {
       title: 'Skate Spots',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.grey.shade800),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.black,
+          seedColor: Colors.grey.shade900,
           brightness: Brightness.dark,
         ),
         useMaterial3: true,

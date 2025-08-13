@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('SkateFlow'),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.grey.shade900,
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
@@ -94,9 +94,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
+            DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: Colors.grey.shade900,
               ),
               child: Text(
                 'Menu',
@@ -124,9 +124,9 @@ class _HomeScreenState extends State<HomeScreen> {
             // Header
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade900,
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
                 ),
@@ -185,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     margin: const EdgeInsets.only(right: 12),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.black, Colors.grey.shade800],
+                        colors: [Colors.grey.shade900, Colors.grey.shade700],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -287,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: Colors.black,
+                        color: Colors.grey.shade800,
                         borderRadius: BorderRadius.circular(25),
                       ),
                       child: const Icon(Icons.skateboarding, color: Colors.white, size: 24),
@@ -305,13 +305,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade200,
+                                color: Colors.grey.shade700,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 park['type'] as String,
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white),
                               ),
+
                             ),
                             const SizedBox(width: 8),
                             const Icon(Icons.location_on, size: 14, color: Colors.grey),
@@ -348,16 +349,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Container(
-              height: 200,
+              height: 300,
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: Colors.grey.shade700),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: _currentPosition == null
-                    ? const Center(child: CircularProgressIndicator())
+                    ? Container(
+                        color: Colors.grey.shade800,
+                        child: const Center(
+                          child: CircularProgressIndicator(color: Colors.white),
+                        ),
+                      )
                     : GoogleMap(
                         initialCameraPosition: CameraPosition(
                           target: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
