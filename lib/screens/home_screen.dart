@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
     }
-    
+
     if (permission != LocationPermission.denied) {
       final position = await Geolocator.getCurrentPosition();
       setState(() {
@@ -64,15 +64,45 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final events = [
-      {'title': 'Campeonato Municipal', 'date': '15/06', 'location': 'Skatepark Central', 'participants': '45'},
-      {'title': 'Workshop de Manobras', 'date': '22/06', 'location': 'Bowl da Liberdade', 'participants': '23'},
-      {'title': 'Sessão Noturna', 'date': '28/06', 'location': 'Pista do Ibirapuera', 'participants': '67'},
+      {
+        'title': 'Campeonato Municipal',
+        'date': '15/06',
+        'location': 'Skatepark Central',
+        'participants': '45'
+      },
+      {
+        'title': 'Workshop de Manobras',
+        'date': '22/06',
+        'location': 'Bowl da Liberdade',
+        'participants': '23'
+      },
+      {
+        'title': 'Sessão Noturna',
+        'date': '28/06',
+        'location': 'Pista do Ibirapuera',
+        'participants': '67'
+      },
     ];
 
     final nearbyParks = [
-      {'name': 'Skatepark Central', 'distance': '1.2 km', 'rating': 4.5, 'type': 'Street'},
-      {'name': 'Bowl da Liberdade', 'distance': '2.5 km', 'rating': 4.8, 'type': 'Bowl'},
-      {'name': 'Pista do Ibirapuera', 'distance': '3.1 km', 'rating': 4.2, 'type': 'Vert'},
+      {
+        'name': 'Skatepark Central',
+        'distance': '1.2 km',
+        'rating': 4.5,
+        'type': 'Street'
+      },
+      {
+        'name': 'Bowl da Liberdade',
+        'distance': '2.5 km',
+        'rating': 4.8,
+        'type': 'Bowl'
+      },
+      {
+        'name': 'Pista do Ibirapuera',
+        'distance': '3.1 km',
+        'rating': 4.2,
+        'type': 'Vert'
+      },
     ];
 
     return Scaffold(
@@ -146,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text(
                     'Encontre as melhores pistas e eventos',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.8),
+                      color: Colors.white.withOpacity(0.8),
                       fontSize: 16,
                     ),
                   ),
@@ -154,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            
+
             // Eventos em Destaque
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -209,9 +239,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.2),
+                                color: Colors.white.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
@@ -227,15 +258,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 12),
                         Row(
                           children: [
-                            const Icon(Icons.calendar_today, color: Colors.white70, size: 16),
+                            const Icon(Icons.calendar_today,
+                                color: Colors.white70, size: 16),
                             const SizedBox(width: 6),
-                            Text(event['date'] as String, style: const TextStyle(color: Colors.white70)),
+                            Text(event['date'] as String,
+                                style: const TextStyle(color: Colors.white70)),
                           ],
                         ),
                         const SizedBox(height: 6),
                         Row(
                           children: [
-                            const Icon(Icons.location_on, color: Colors.white70, size: 16),
+                            const Icon(Icons.location_on,
+                                color: Colors.white70, size: 16),
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
@@ -252,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-            
+
             // Pistas Próximas
             Padding(
               padding: const EdgeInsets.all(16),
@@ -280,7 +314,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
                   elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(16),
                     leading: Container(
@@ -290,11 +325,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Colors.grey.shade800,
                         borderRadius: BorderRadius.circular(25),
                       ),
-                      child: const Icon(Icons.skateboarding, color: Colors.white, size: 24),
+                      child: const Icon(Icons.skateboarding,
+                          color: Colors.white, size: 24),
                     ),
                     title: Text(
                       park['name'] as String,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -303,31 +340,38 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
                                 color: Colors.grey.shade700,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 park['type'] as String,
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white),
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white),
                               ),
-
                             ),
                             const SizedBox(width: 8),
-                            const Icon(Icons.location_on, size: 14, color: Colors.grey),
+                            const Icon(Icons.location_on,
+                                size: 14, color: Colors.grey),
                             const SizedBox(width: 2),
-                            Text(park['distance'] as String, style: const TextStyle(color: Colors.grey)),
+                            Text(park['distance'] as String,
+                                style: const TextStyle(color: Colors.grey)),
                           ],
                         ),
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            const Icon(Icons.star, size: 16, color: Colors.amber),
+                            const Icon(Icons.star,
+                                size: 16, color: Colors.amber),
                             const SizedBox(width: 4),
                             Text(
                               park['rating'].toString(),
-                              style: const TextStyle(fontWeight: FontWeight.w500),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w500),
                             ),
                           ],
                         ),
@@ -339,7 +383,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-            
+
             // Mapa das Pistas
             const Padding(
               padding: EdgeInsets.all(16),
@@ -366,7 +410,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       )
                     : GoogleMap(
                         initialCameraPosition: CameraPosition(
-                          target: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                          target: LatLng(_currentPosition!.latitude,
+                              _currentPosition!.longitude),
                           zoom: 12,
                         ),
                         markers: _markers,

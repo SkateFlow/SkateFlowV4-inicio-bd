@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 class SkateparksScreen extends StatefulWidget {
@@ -10,11 +11,15 @@ class SkateparksScreen extends StatefulWidget {
 class _SkateparksScreenState extends State<SkateparksScreen> {
   final Map<int, PageController> _pageControllers = {};
   final Map<int, int> _currentPages = {};
+  final Map<int, Timer> _timers = {};
 
   @override
   void dispose() {
     for (final controller in _pageControllers.values) {
       controller.dispose();
+    }
+    for (final timer in _timers.values) {
+      timer.cancel();
     }
     super.dispose();
   }
@@ -78,8 +83,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
         itemCount: skateparks.length,
         itemBuilder: (context, index) {
           final park = skateparks[index];
-          _pageControllers[index] ??= PageController();
-          _currentPages[index] ??= 0;
+
           
           return Card(
             margin: const EdgeInsets.only(bottom: 16),
@@ -88,89 +92,91 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: () => _showParkDetails(context, park),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Carrossel de imagens da pista
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                    child: SizedBox(
-                      height: 160,
-                      width: double.infinity,
-                      child: _buildImageCarousel(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: SizedBox(
+                  height: 250,
+                  child: Stack(
+                    children: [
+                      _buildImageCarousel(
                         park['images'] as List<String>, 
                         index,
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                park['name'] as String,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.7),
+                              ],
                             ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                park['type'] as String,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          park['description'] as String,
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 14,
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      park['name'] as String,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      park['type'] as String,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  const Icon(Icons.location_on, size: 16, color: Colors.white70),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    park['distance'] as String,
+                                    style: const TextStyle(color: Colors.white70),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  const Icon(Icons.star, size: 16, color: Colors.amber),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    park['rating'].toString(),
+                                    style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            const Icon(Icons.location_on, size: 16, color: Colors.grey),
-                            const SizedBox(width: 4),
-                            Text(
-                              park['distance'] as String,
-                              style: const TextStyle(color: Colors.grey),
-                            ),
-                            const SizedBox(width: 16),
-                            const Icon(Icons.star, size: 16, color: Colors.amber),
-                            const SizedBox(width: 4),
-                            Text(
-                              park['rating'].toString(),
-                              style: const TextStyle(fontWeight: FontWeight.w500),
-                            ),
-                            const Spacer(),
-                            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-                          ],
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           );
@@ -187,27 +193,29 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        maxChildSize: 0.9,
-        minChildSize: 0.5,
-        builder: (context, scrollController) => SingleChildScrollView(
-          controller: scrollController,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
+        initialChildSize: 0.8,
+        maxChildSize: 0.95,
+        minChildSize: 0.6,
+        builder: (context, scrollController) => Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.only(top: 8, bottom: 4),
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
                 ),
-                const SizedBox(height: 20),
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                controller: scrollController,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                 // Carrossel de imagens da pista no modal
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
@@ -217,7 +225,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                     child: _buildModalImageCarousel(park['images'] as List<String>),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -290,47 +298,53 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                     ),
                   ).toList(),
                 ),
-                const SizedBox(height: 30),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    const SizedBox(height: 30),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text('Como Chegar'),
                           ),
                         ),
-                        child: const Text('Como Chegar'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {},
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text('Favoritar'),
                           ),
                         ),
-                        child: const Text('Favoritar'),
-                      ),
+                      ],
                     ),
+                    const SizedBox(height: 20),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildImageCarousel(List<String> images, int carouselIndex) {
+    _pageControllers[carouselIndex] ??= PageController();
+    _currentPages[carouselIndex] ??= 0;
+    
     return Stack(
       children: [
         PageView.builder(
@@ -388,7 +402,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                     shape: BoxShape.circle,
                     color: _currentPages[carouselIndex] == entry.key
                         ? Colors.white
-                        : Colors.white.withValues(alpha: 0.4),
+                        : Colors.white.withOpacity(0.4),
                   ),
                 );
               }).toList(),
@@ -414,7 +428,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.5),
+                    color: Colors.black.withOpacity(0.5),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -444,7 +458,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.5),
+                    color: Colors.black.withOpacity(0.5),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -524,9 +538,9 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                         shape: BoxShape.circle,
                         color: currentModalPage == entry.key
                             ? Colors.white
-                            : Colors.white.withValues(alpha: 0.4),
+                            : Colors.white.withOpacity(0.4),
                         border: Border.all(
-                          color: Colors.black.withValues(alpha: 0.3),
+                          color: Colors.black.withOpacity(0.3),
                           width: 1,
                         ),
                       ),
@@ -542,7 +556,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.7),
+                    color: Colors.black.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(

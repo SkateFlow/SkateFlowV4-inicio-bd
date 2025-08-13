@@ -14,14 +14,18 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _passwordError = false;
   bool _obscurePassword = true;
 
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[\w-\.]+@[\w-]+\.[a-zA-Z]{2,}$').hasMatch(email);
+  }
+
   void _login() {
     setState(() {
-      _emailError = _emailController.text.isEmpty;
+      _emailError = _emailController.text.isEmpty || !_isValidEmail(_emailController.text);
       _passwordError = _passwordController.text.isEmpty;
     });
 
     if (!_emailError && !_passwordError) {
-      Navigator.pushReplacementNamed(context, '/main');
+      Navigator.pushReplacementNamed(context, '/loading');
     }
   }
 
@@ -33,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.black, Color(0xFF333333)],
+            colors: [Color(0xFF38888D2), Color(0xFF043C70)],
           ),
         ),
         child: SafeArea(
@@ -66,18 +70,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   'Conecte-se com a comunidade skate',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.white.withValues(alpha: 0.8),
+                    color: Colors.white.withOpacity(0.8),
                   ),
                 ),
                 const SizedBox(height: 48),
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: const Color(0xFF08243E),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
+                        color: Colors.black.withOpacity(0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -110,18 +114,19 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           labelStyle: TextStyle(
-                            color: _emailError ? Colors.red : Colors.grey.shade600,
+                            color: _emailError ? Colors.red : Colors.white70,
                           ),
                           filled: true,
-                          fillColor: Colors.grey.shade50,
+                          fillColor: Colors.white.withOpacity(0.1),
+                          errorText: _emailError && _emailController.text.isNotEmpty
+                              ? 'Email inválido'
+                              : null,
                         ),
                         keyboardType: TextInputType.emailAddress,
                         onChanged: (value) {
-                          if (_emailError && value.isNotEmpty) {
-                            setState(() {
-                              _emailError = false;
-                            });
-                          }
+                          setState(() {
+                            _emailError = value.isNotEmpty && !_isValidEmail(value);
+                          });
                         },
                       ),
                       const SizedBox(height: 16),
@@ -160,10 +165,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           labelStyle: TextStyle(
-                            color: _passwordError ? Colors.red : Colors.grey.shade600,
+                            color: _passwordError ? Colors.red : Colors.white70,
                           ),
                           filled: true,
-                          fillColor: Colors.grey.shade50,
+                          fillColor: Colors.white.withOpacity(0.1),
                         ),
                         obscureText: _obscurePassword,
                         onChanged: (value) {
@@ -181,8 +186,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: ElevatedButton(
                           onPressed: _login,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.black,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -199,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () {},
                         child: const Text(
                           'Esqueceu a senha?',
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ],
@@ -213,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Text(
                     'Não tem conta? Cadastre-se',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9),
+                      color: Colors.white.withOpacity(0.9),
                       fontSize: 16,
                     ),
                   ),
