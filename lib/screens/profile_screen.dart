@@ -41,12 +41,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.settings, color: Colors.white),
-                onPressed: () {},
-              ),
-            ],
+
           ),
           SliverToBoxAdapter(
             child: Column(
@@ -208,7 +203,9 @@ class ProfileScreen extends StatelessWidget {
                 _buildMenuOption(Icons.history, 'Histórico de Sessões', () {}),
                 _buildMenuOption(Icons.favorite, 'Pistas Favoritas', () {}),
                 _buildMenuOption(Icons.group, 'Amigos', () {}),
-                _buildMenuOption(Icons.settings, 'Configurações', () {}),
+                _buildMenuOption(Icons.settings, 'Configurações', () {
+                  Navigator.pushNamed(context, '/settings');
+                }),
                 _buildMenuOption(Icons.help, 'Ajuda', () {}),
                 _buildMenuOption(Icons.logout, 'Sair', () {
                   Navigator.pushNamedAndRemoveUntil(
