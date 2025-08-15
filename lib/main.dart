@@ -5,6 +5,7 @@ import 'screens/loading_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/map_screen.dart';
 import 'screens/skateparks_screen.dart';
+import 'screens/events_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/settings_screen.dart';
 
@@ -37,19 +38,27 @@ class SkateApp extends StatelessWidget {
 }
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final int initialIndex;
+  const MainScreen({super.key, this.initialIndex = 0});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
+  late int _currentIndex;
+  
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
   
   final List<Widget> _screens = [
     const HomeScreen(),
     const MapScreen(),
     const SkateparksScreen(),
+    const EventsScreen(),
     const ProfileScreen(),
   ];
 
@@ -80,6 +89,10 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.skateboarding),
             label: 'Pistas',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.flag),
+            label: 'Eventos',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

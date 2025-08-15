@@ -91,6 +91,7 @@ class ProfileScreen extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -105,7 +106,7 @@ class ProfileScreen extends StatelessWidget {
                       Text(
                         user['bio'] as String,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ],
                   ),
@@ -174,11 +175,14 @@ class ProfileScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
-                      _buildInfoCard(
-                        Icons.trending_up,
-                        'Nível',
-                        user['level'] as String,
-                        Colors.green,
+                      GestureDetector(
+                        onTap: () => _showLevelInfo(context, user['level'] as String),
+                        child: _buildInfoCard(
+                          Icons.trending_up,
+                          'Nível',
+                          user['level'] as String,
+                          Colors.green,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       _buildInfoCard(
@@ -258,7 +262,7 @@ class ProfileScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -300,12 +304,82 @@ class ProfileScreen extends StatelessWidget {
       title: Text(
         title,
         style: TextStyle(
-          color: isDestructive ? Colors.red : Colors.black,
+          color: isDestructive ? Colors.red : Colors.white,
           fontWeight: FontWeight.w500,
         ),
       ),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       onTap: onTap,
+    );
+  }
+
+  void _showLevelInfo(BuildContext context, String level) {
+    String emoji;
+    String description;
+    
+    switch (level) {
+      case 'Iniciante':
+        emoji = '🙂';
+        description = 'Você está começando sua jornada no skate! Aqui, o foco é aprender as bases, desenvolver equilíbrio, postura e dominar as primeiras manobras.';
+        break;
+      case 'Intermediário':
+        emoji = '😀';
+        description = 'Você já tem domínio das manobras básicas e busca novos desafios. É hora de aprimorar a técnica, aumentar a fluidez e explorar combinações mais complexas.';
+        break;
+      case 'Avançado':
+        emoji = '😃';
+        description = 'Você já domina o skate com confiança, executa manobras técnicas e cria seu próprio estilo. Agora, o objetivo é aperfeiçoar detalhes e elevar ainda mais o nível.';
+        break;
+      default:
+        emoji = '🙂';
+        description = 'Continue praticando para evoluir no skate!';
+    }
+    
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.5),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                emoji,
+                style: const TextStyle(fontSize: 48),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Nível $level',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                description,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Entendi'),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -8,12 +8,14 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  bool _isDarkMode = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Configurações'),
-        backgroundColor: widget.isDarkMode ? Colors.grey[900] : Colors.black,
+        backgroundColor: _isDarkMode ? Colors.grey[900] : Colors.black,
         foregroundColor: Colors.white,
       ),
       body: ListView(
@@ -23,10 +25,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: SwitchListTile(
               title: const Text('Tema Escuro'),
               subtitle: const Text('Alternar entre tema claro e escuro'),
-              value: widget.isDarkMode,
-              onChanged: widget.onThemeChanged,
+              value: _isDarkMode,
+              onChanged: (value) {
+                setState(() {
+                  _isDarkMode = value;
+                });
+              },
               secondary: Icon(
-                widget.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                _isDarkMode ? Icons.dark_mode : Icons.light_mode,
               ),
             ),
           ),
