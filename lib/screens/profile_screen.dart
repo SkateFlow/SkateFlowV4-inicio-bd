@@ -444,28 +444,64 @@ class ProfileScreen extends StatelessWidget {
               leading: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade100,
+                  color: const Color(0xFF25D366).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text('📱', style: TextStyle(fontSize: 20)),
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF25D366),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.chat,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
               ),
               title: const Text('WhatsApp'),
+              subtitle: const Text('Compartilhar no WhatsApp'),
               onTap: () {
                 Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Abrindo WhatsApp...')),
+                );
               },
             ),
             ListTile(
               leading: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.purple.shade100,
+                  color: const Color(0xFFE4405F).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text('📷', style: TextStyle(fontSize: 20)),
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFE4405F), Color(0xFF833AB4), Color(0xFFF77737)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Icon(
+                    Icons.camera_alt,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
               ),
               title: const Text('Instagram'),
+              subtitle: const Text('Compartilhar no Instagram'),
               onTap: () {
                 Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Abrindo Instagram...')),
+                );
               },
             ),
             const SizedBox(height: 20),
