@@ -116,8 +116,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SkateFlow'),
-        backgroundColor: Colors.grey.shade900,
+        title: const Text(
+          'SkateFlow',
+          style: TextStyle(fontWeight: FontWeight.w900),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF00294F), Color(0xFF001426), Color(0xFF010A12), Color(0xFF00294F)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
@@ -134,14 +145,19 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.grey.shade900,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF00294F), Color(0xFF001426), Color(0xFF010A12), Color(0xFF00294F)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
               ),
-              child: Text(
+              child: const Text(
                 'Menu',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
@@ -338,7 +354,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   const Text(
                     'Pistas Próximas',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.white),
                   ),
                   TextButton(
                     onPressed: () {},
@@ -806,32 +822,54 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
               itemBuilder: (context, index) {
-                return Image.asset(
-                  images[index],
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey.shade300,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.skateboarding,
-                            size: 60,
-                            color: Colors.grey.shade600,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            'Imagem não encontrada',
-                            style: TextStyle(
-                              color: Colors.grey.shade600,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
+                return GestureDetector(
+                  onPanUpdate: (details) {
+                    // Detecta movimento horizontal para arrastar
+                    if (details.delta.dx > 10) {
+                      // Arrastar para a direita - imagem anterior
+                      if (currentModalPage > 0) {
+                        modalController.previousPage(
+                          duration: const Duration(milliseconds: 120),
+                          curve: Curves.fastEaseInToSlowEaseOut,
+                        );
+                      }
+                    } else if (details.delta.dx < -10) {
+                      // Arrastar para a esquerda - próxima imagem
+                      if (currentModalPage < images.length - 1) {
+                        modalController.nextPage(
+                          duration: const Duration(milliseconds: 120),
+                          curve: Curves.fastEaseInToSlowEaseOut,
+                        );
+                      }
+                    }
                   },
+                  child: Image.asset(
+                    images[index],
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey.shade300,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.skateboarding,
+                              size: 60,
+                              color: Colors.grey.shade600,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'Imagem não encontrada',
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             ),

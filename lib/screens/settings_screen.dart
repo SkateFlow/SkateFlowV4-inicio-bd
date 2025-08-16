@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'settings/settings_screens.dart';
+import 'edit_profile_screen.dart' as edit;
+import 'change_photo_screen.dart' as photo;
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -97,8 +99,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _getScreen(String route) {
     switch (route) {
-      case '/edit-profile': return const EditProfileScreen();
-      case '/change-photo': return const ChangePhotoScreen();
+      case '/edit-profile': return const edit.EditProfileScreen();
+      case '/change-photo': return const photo.ChangePhotoScreen();
       case '/privacy': return const PrivacyScreen();
       case '/language': return const LanguageScreen();
       case '/notifications': return const NotificationsScreen();

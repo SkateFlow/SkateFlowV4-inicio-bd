@@ -64,8 +64,19 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pistas'),
-        backgroundColor: Colors.black,
+        title: const Text(
+          'Pistas',
+          style: TextStyle(fontWeight: FontWeight.w900),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF00294F), Color(0xFF001426), Color(0xFF010A12), Color(0xFF00294F)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -356,32 +367,58 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
             });
           },
           itemBuilder: (context, index) {
-            return Image.asset(
-              images[index],
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.grey.shade300,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.skateboarding,
-                        size: 40,
-                        color: Colors.grey.shade600,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Imagem não encontrada',
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
+            return GestureDetector(
+              onPanStart: (details) {
+                _timers[carouselIndex]?.cancel();
               },
+              onPanUpdate: (details) {
+                if (details.delta.dx.abs() > 5) {
+                  if (details.delta.dx > 0) {
+                    final currentPage = _currentPages[carouselIndex] ?? 0;
+                    if (currentPage > 0) {
+                      _pageControllers[carouselIndex]?.previousPage(
+                        duration: const Duration(milliseconds: 120),
+                        curve: Curves.fastEaseInToSlowEaseOut,
+                      );
+                    }
+                  } else {
+                    final currentPage = _currentPages[carouselIndex] ?? 0;
+                    if (currentPage < images.length - 1) {
+                      _pageControllers[carouselIndex]?.nextPage(
+                        duration: const Duration(milliseconds: 120),
+                        curve: Curves.fastEaseInToSlowEaseOut,
+                      );
+                    }
+                  }
+                }
+              },
+              child: Image.asset(
+                images[index],
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey.shade300,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.skateboarding,
+                          size: 40,
+                          color: Colors.grey.shade600,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Imagem não encontrada',
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             );
           },
         ),
@@ -394,7 +431,8 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: images.asMap().entries.map((entry) {
-                return Container(
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 120),
                   width: 8,
                   height: 8,
                   margin: const EdgeInsets.symmetric(horizontal: 2),
@@ -420,8 +458,8 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                   final currentPage = _currentPages[carouselIndex] ?? 0;
                   if (currentPage > 0) {
                     _pageControllers[carouselIndex]?.previousPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
+                      duration: const Duration(milliseconds: 120),
+                      curve: Curves.fastEaseInToSlowEaseOut,
                     );
                   }
                 },
@@ -450,8 +488,8 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                   final currentPage = _currentPages[carouselIndex] ?? 0;
                   if (currentPage < images.length - 1) {
                     _pageControllers[carouselIndex]?.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
+                      duration: const Duration(milliseconds: 120),
+                      curve: Curves.fastEaseInToSlowEaseOut,
                     );
                   }
                 },
@@ -530,7 +568,8 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: images.asMap().entries.map((entry) {
-                    return Container(
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 120),
                       width: 10,
                       height: 10,
                       margin: const EdgeInsets.symmetric(horizontal: 3),
@@ -553,7 +592,8 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
               Positioned(
                 top: 12,
                 right: 12,
-                child: Container(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 120),
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.7),

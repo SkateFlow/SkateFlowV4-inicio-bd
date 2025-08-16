@@ -24,7 +24,7 @@ class SkateApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.grey.shade800),
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFF4A4A4A),
+        scaffoldBackgroundColor: const Color(0xFF202020),
       ),
       home: const LoginScreen(),
       routes: {
@@ -74,7 +74,7 @@ class _MainScreenState extends State<MainScreen> {
           });
         },
         type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xFF4A4A4A),
+        backgroundColor: const Color(0xFF202020),
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white70,
         items: const [
