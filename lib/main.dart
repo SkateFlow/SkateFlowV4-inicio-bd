@@ -13,8 +13,37 @@ void main() {
   runApp(const SkateApp());
 }
 
-class SkateApp extends StatelessWidget {
+class ThemeProvider extends ChangeNotifier {
+  static final ThemeProvider _instance = ThemeProvider._internal();
+  factory ThemeProvider() => _instance;
+  ThemeProvider._internal();
+
+  bool _isDarkMode = true; // Escuro como padrão
+  bool get isDarkMode => _isDarkMode;
+
+  void toggleTheme() {
+    _isDarkMode = !_isDarkMode;
+    notifyListeners();
+  }
+}
+
+class SkateApp extends StatefulWidget {
   const SkateApp({super.key});
+
+  @override
+  State<SkateApp> createState() => _SkateAppState();
+}
+
+class _SkateAppState extends State<SkateApp> {
+  final ThemeProvider _themeProvider = ThemeProvider();
+
+  @override
+  void initState() {
+    super.initState();
+    _themeProvider.addListener(() {
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +51,22 @@ class SkateApp extends StatelessWidget {
       title: 'Skate Spots',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.grey.shade800),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
+        scaffoldBackgroundColor: Colors.white,
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.grey.shade800,
+          brightness: Brightness.dark,
+        ),
         useMaterial3: true,
         scaffoldBackgroundColor: const Color(0xFF202020),
       ),
+      themeMode: _themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: const LoginScreen(),
       routes: {
         '/register': (context) => const RegisterScreen(),
@@ -64,6 +105,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -74,9 +117,9 @@ class _MainScreenState extends State<MainScreen> {
           });
         },
         type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xFF202020),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
+        backgroundColor: isDark ? const Color(0xFF202020) : Colors.white,
+        selectedItemColor: isDark ? Colors.white : Colors.black,
+        unselectedItemColor: isDark ? Colors.white70 : Colors.grey,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

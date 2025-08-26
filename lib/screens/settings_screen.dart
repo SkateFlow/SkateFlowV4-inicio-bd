@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'settings/settings_screens.dart';
 import 'edit_profile_screen.dart' as edit;
 import 'change_photo_screen.dart' as photo;
+import '../main.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -15,9 +16,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Configurações'),
-        backgroundColor: Colors.black,
+        title: const Text(
+          'Configurações',
+          style: TextStyle(fontWeight: FontWeight.w900),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF00294F),
+                Color(0xFF001426),
+                Color(0xFF010A12),
+                Color(0xFF00294F)
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
+        elevation: 0,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -28,6 +46,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildTile(Icons.privacy_tip, 'Gerenciar privacidade', () => _navigateTo(context, '/privacy')),
           ]),
           _buildSection('App', [
+            _buildThemeToggle(),
             _buildTile(Icons.language, 'Idioma', () => _navigateTo(context, '/language')),
             _buildTile(Icons.notifications, 'Notificações', () => _navigateTo(context, '/notifications')),
             _buildTile(Icons.volume_up, 'Som e vibração', () => _navigateTo(context, '/sound')),
@@ -60,14 +79,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Theme.of(context).brightness == Brightness.dark 
+                  ? Colors.white 
+                  : Colors.black,
             ),
           ),
         ),
         Card(
+          color: Theme.of(context).brightness == Brightness.dark 
+              ? const Color(0xFF2C2C2C) 
+              : Colors.white,
           child: Column(children: children),
         ),
         const SizedBox(height: 16),
@@ -76,17 +100,58 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildTile(IconData icon, String title, VoidCallback onTap, {bool isDestructive = false}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return ListTile(
-      leading: Icon(icon, color: isDestructive ? Colors.red : Colors.grey.shade700),
+      leading: Icon(
+        icon, 
+        color: isDestructive 
+            ? Colors.red 
+            : (isDark ? Colors.white70 : Colors.grey.shade700)
+      ),
       title: Text(
         title,
         style: TextStyle(
-          color: isDestructive ? Colors.red : Colors.black,
+          color: isDestructive 
+              ? Colors.red 
+              : (isDark ? Colors.white : Colors.black),
           fontWeight: FontWeight.w500,
         ),
       ),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      trailing: Icon(
+        Icons.arrow_forward_ios, 
+        size: 16,
+        color: isDark ? Colors.white70 : Colors.grey.shade600,
+      ),
       onTap: onTap,
+    );
+  }
+
+  Widget _buildThemeToggle() {
+    final themeProvider = ThemeProvider();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return ListTile(
+      leading: Icon(
+        themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+        color: isDark ? Colors.white70 : Colors.grey.shade700,
+      ),
+      title: Text(
+        'Tema escuro',
+        style: TextStyle(
+          color: isDark ? Colors.white : Colors.black,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      trailing: Switch(
+        value: themeProvider.isDarkMode,
+        activeThumbColor: isDark ? Colors.white : Colors.black,
+        onChanged: (value) {
+          setState(() {
+            themeProvider.toggleTheme();
+          });
+        },
+      ),
     );
   }
 

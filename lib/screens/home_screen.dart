@@ -87,8 +87,12 @@ class _HomeScreenState extends State<HomeScreen> {
         'address': 'Centro da cidade',
         'hours': '8h às 22h',
         'features': ['Bowl', 'Street', 'Half-pipe', 'Corrimão'],
-        'description': 'Pista completa no centro da cidade com estruturas variadas para todos os níveis.',
-        'images': ['assets/images/skateparks/SkateCity.png', 'assets/images/skateparks/SkateCity2.png'],
+        'description':
+            'Pista completa no centro da cidade com estruturas variadas para todos os níveis.',
+        'images': [
+          'assets/images/skateparks/SkateCity.png',
+          'assets/images/skateparks/SkateCity2.png'
+        ],
       },
       {
         'name': 'Rajas Skatepark',
@@ -98,8 +102,12 @@ class _HomeScreenState extends State<HomeScreen> {
         'address': 'Zona Sul',
         'hours': '6h às 20h',
         'features': ['Bowl', 'Mini Ramp'],
-        'description': 'Bowl clássico perfeito para manobras aéreas e transições suaves.',
-        'images': ['assets/images/skateparks/Rajas1.png', 'assets/images/skateparks/Rajas2.png'],
+        'description':
+            'Bowl clássico perfeito para manobras aéreas e transições suaves.',
+        'images': [
+          'assets/images/skateparks/Rajas1.png',
+          'assets/images/skateparks/Rajas2.png'
+        ],
       },
       {
         'name': 'Quadespra',
@@ -109,8 +117,12 @@ class _HomeScreenState extends State<HomeScreen> {
         'address': 'Zona Norte',
         'hours': '7h às 18h',
         'features': ['Plaza', 'Street', 'Escadas'],
-        'description': 'Plaza urbana com obstáculos técnicos para street skating avançado.',
-        'images': ['assets/images/skateparks/image2.png', 'assets/images/skateparks/image9.png'],
+        'description':
+            'Plaza urbana com obstáculos técnicos para street skating avançado.',
+        'images': [
+          'assets/images/skateparks/image2.png',
+          'assets/images/skateparks/image9.png'
+        ],
       },
     ];
 
@@ -123,7 +135,12 @@ class _HomeScreenState extends State<HomeScreen> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF00294F), Color(0xFF001426), Color(0xFF010A12), Color(0xFF00294F)],
+              colors: [
+                Color(0xFF00294F),
+                Color(0xFF001426),
+                Color(0xFF010A12),
+                Color(0xFF00294F)
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -132,45 +149,20 @@ class _HomeScreenState extends State<HomeScreen> {
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
-          Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () => Scaffold.of(context).openEndDrawer(),
-            ),
+          IconButton(
+            icon: const Icon(Icons.notifications_outlined),
+            onPressed: () => _showAlertsDialog(context),
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () {
+              Navigator.pushNamed(context, '/settings');
+            },
+          ),
+          const SizedBox(
+            width: 8,
           ),
         ],
-      ),
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF00294F), Color(0xFF001426), Color(0xFF010A12), Color(0xFF00294F)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              child: const Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Configurações'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/settings');
-              },
-            ),
-          ],
-        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -218,13 +210,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   const Text(
                     'Eventos em Destaque',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
-                          builder: (context) => const MainScreen(initialIndex: 3),
+                          builder: (context) =>
+                              const MainScreen(initialIndex: 3),
                         ),
                       );
                     },
@@ -244,102 +240,112 @@ class _HomeScreenState extends State<HomeScreen> {
                   return GestureDetector(
                     onTap: () => _showEventDetails(context, event),
                     child: Container(
-                    width: 300,
-                    margin: const EdgeInsets.only(right: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        width: 2,
-                        color: Colors.transparent,
-                      ),
-                    ),
-                    child: Container(
+                      width: 300,
+                      margin: const EdgeInsets.only(right: 12),
                       decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
                         borderRadius: BorderRadius.circular(12),
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF3888D2), Color(0xFF043C70)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+                        border: Border.all(
+                          width: 2,
+                          color: Colors.transparent,
                         ),
                       ),
                       child: Container(
-                        margin: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(12),
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF3888D2), Color(0xFF043C70)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
                         ),
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    event['title'] as String,
-                                    style: const TextStyle(
-                                      color: Colors.black87,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade600,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    '${event['participants']} pessoas',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [Color(0xFF3888D2), Color(0xFF043C70)],
-                                ),
-                                borderRadius: BorderRadius.all(Radius.circular(8)),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
+                        child: Container(
+                          margin: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Icon(Icons.calendar_today, color: Colors.white, size: 16),
-                                  const SizedBox(width: 6),
-                                  Text(event['date'] as String, style: const TextStyle(color: Colors.white)),
+                                  Expanded(
+                                    child: Text(
+                                      event['title'] as String,
+                                      style: const TextStyle(
+                                        color: Colors.black87,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade600,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      '${event['participants']} pessoas',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
-                            ),
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                const Icon(Icons.location_on,
-                                    color: Colors.black54, size: 16),
-                                const SizedBox(width: 6),
-                                Expanded(
-                                  child: Text(
-                                    event['location'] as String,
-                                    style: const TextStyle(color: Colors.black54),
-                                    overflow: TextOverflow.ellipsis,
+                              const SizedBox(height: 12),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xFF3888D2),
+                                      Color(0xFF043C70)
+                                    ],
                                   ),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8)),
                                 ),
-                              ],
-                            ),
-                          ],
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.calendar_today,
+                                        color: Colors.white, size: 16),
+                                    const SizedBox(width: 6),
+                                    Text(event['date'] as String,
+                                        style: const TextStyle(
+                                            color: Colors.white)),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  const Icon(Icons.location_on,
+                                      color: Colors.black54, size: 16),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      event['location'] as String,
+                                      style: const TextStyle(
+                                          color: Colors.black54),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
                     ),
                   );
                 },
@@ -354,7 +360,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   const Text(
                     'Pistas Próximas',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white),
                   ),
                   TextButton(
                     onPressed: () {},
@@ -448,7 +457,10 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: EdgeInsets.all(16),
               child: Text(
                 'Mapa das Pistas',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
             ),
             Container(
@@ -493,12 +505,13 @@ class _HomeScreenState extends State<HomeScreen> {
       'date': event['date'],
       'location': event['location'],
       'participants': event['participants'],
-      'description': 'Evento imperdível de skate com a participação de skatistas de toda a região.',
+      'description':
+          'Evento imperdível de skate com a participação de skatistas de toda a região.',
       'organizer': 'Organização Local',
       'category': 'Street',
       'image': null,
     };
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -576,7 +589,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
                             color: Colors.black,
                             borderRadius: BorderRadius.circular(12),
@@ -600,13 +614,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _buildInfoRow(Icons.location_on, eventDetails['location'] as String),
+                    _buildInfoRow(
+                        Icons.location_on, eventDetails['location'] as String),
                     const SizedBox(height: 8),
-                    _buildInfoRow(Icons.calendar_today, eventDetails['date'] as String),
+                    _buildInfoRow(
+                        Icons.calendar_today, eventDetails['date'] as String),
                     const SizedBox(height: 8),
-                    _buildInfoRow(Icons.person, 'Organizador: ${eventDetails['organizer']}'),
+                    _buildInfoRow(Icons.person,
+                        'Organizador: ${eventDetails['organizer']}'),
                     const SizedBox(height: 8),
-                    _buildInfoRow(Icons.group, '${eventDetails['participants']} participantes'),
+                    _buildInfoRow(Icons.group,
+                        '${eventDetails['participants']} participantes'),
                     const SizedBox(height: 30),
                     Row(
                       children: [
@@ -686,7 +704,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: SizedBox(
                         height: 200,
                         width: double.infinity,
-                        child: _buildModalImageCarousel(park['images'] as List<String>),
+                        child: _buildModalImageCarousel(
+                            park['images'] as List<String>),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -703,7 +722,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
                             color: Colors.black,
                             borderRadius: BorderRadius.circular(12),
@@ -729,7 +749,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 20),
                     _buildInfoRow(Icons.location_on, park['address'] as String),
                     const SizedBox(height: 8),
-                    _buildInfoRow(Icons.access_time, 'Aberto das ${park['hours']}'),
+                    _buildInfoRow(
+                        Icons.access_time, 'Aberto das ${park['hours']}'),
                     const SizedBox(height: 8),
                     _buildInfoRow(Icons.directions, park['distance'] as String),
                     const SizedBox(height: 8),
@@ -755,12 +776,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: (park['features'] as List<String>).map((feature) => 
-                        Chip(
-                          label: Text(feature),
-                          backgroundColor: Colors.grey.shade200,
-                        ),
-                      ).toList(),
+                      children: (park['features'] as List<String>)
+                          .map(
+                            (feature) => Chip(
+                              label: Text(feature),
+                              backgroundColor: Colors.grey.shade200,
+                            ),
+                          )
+                          .toList(),
                     ),
                     const SizedBox(height: 30),
                     Row(
@@ -810,7 +833,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, setModalState) {
         int currentModalPage = 0;
         PageController modalController = PageController();
-        
+
         return Stack(
           children: [
             PageView.builder(
@@ -904,7 +927,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 top: 12,
                 right: 12,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(12),
@@ -937,6 +961,62 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showAlertsDialog(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.5),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF2C2C2C) : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.notifications_off_outlined,
+                size: 48,
+                color: isDark ? Colors.white70 : Colors.grey,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Alertas',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Você não possui alertas!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: isDark ? Colors.white70 : Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isDark ? Colors.white : Colors.black,
+                  foregroundColor: isDark ? Colors.black : Colors.white,
+                ),
+                child: const Text('Fechar'),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
