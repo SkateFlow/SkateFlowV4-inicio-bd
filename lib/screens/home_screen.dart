@@ -181,9 +181,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Olá, Skatista!',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -208,12 +208,14 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Eventos em Destaque',
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white 
+                            : Colors.black),
                   ),
                   TextButton(
                     onPressed: () {
@@ -358,12 +360,14 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Pistas Próximas',
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w900,
-                        color: Colors.white),
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white 
+                            : Colors.black),
                   ),
                   TextButton(
                     onPressed: () {},
@@ -398,8 +402,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     title: Text(
                       park['name'] as String,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, 
+                          fontSize: 16,
+                          color: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.white 
+                              : Colors.black),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -438,8 +446,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(width: 4),
                             Text(
                               park['rating'].toString(),
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Theme.of(context).brightness == Brightness.dark 
+                                      ? Colors.white 
+                                      : Colors.black),
                             ),
                           ],
                         ),
@@ -453,14 +464,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             // Mapa das Pistas
-            const Padding(
-              padding: EdgeInsets.all(16),
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: Text(
                 'Mapa das Pistas',
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                    color: Theme.of(context).brightness == Brightness.dark 
+                        ? Colors.white 
+                        : Colors.black),
               ),
             ),
             Container(
@@ -582,9 +595,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                           child: Text(
                             eventDetails['title'] as String,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
+                              color: Theme.of(context).brightness == Brightness.dark 
+                                  ? Colors.white 
+                                  : Colors.black,
                             ),
                           ),
                         ),
@@ -610,7 +626,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       eventDetails['description'] as String,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.grey.shade700,
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white70 
+                            : Colors.grey.shade700,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -715,9 +733,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                           child: Text(
                             park['name'] as String,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
+                              color: Theme.of(context).brightness == Brightness.dark 
+                                  ? Colors.white 
+                                  : Colors.black,
                             ),
                           ),
                         ),
@@ -743,7 +764,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       park['description'] as String,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.grey.shade700,
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white70 
+                            : Colors.grey.shade700,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -760,16 +783,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(width: 8),
                         Text(
                           '${park['rating']} estrelas',
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context).brightness == Brightness.dark 
+                                ? Colors.white 
+                                : Colors.black,
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
-                    const Text(
+                    Text(
                       'Estruturas',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white 
+                            : Colors.black,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -779,8 +810,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: (park['features'] as List<String>)
                           .map(
                             (feature) => Chip(
-                              label: Text(feature),
-                              backgroundColor: Colors.grey.shade200,
+                              label: Text(
+                                feature,
+                                style: TextStyle(
+                                  color: Theme.of(context).brightness == Brightness.dark 
+                                      ? Colors.black 
+                                      : Colors.black,
+                                ),
+                              ),
+                              backgroundColor: Theme.of(context).brightness == Brightness.dark 
+                                  ? Colors.grey.shade300 
+                                  : Colors.grey.shade200,
                             ),
                           )
                           .toList(),
@@ -950,17 +990,25 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildInfoRow(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: Colors.grey.shade600),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ),
-      ],
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Row(
+          children: [
+            Icon(icon, size: 20, color: Colors.grey.shade600),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -988,7 +1036,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Alertas',
+                'Nenhuma notificação',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -997,7 +1045,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Você não possui alertas!',
+                'Você não tem notificações no momento.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,

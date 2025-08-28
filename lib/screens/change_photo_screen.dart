@@ -74,11 +74,17 @@ class ChangePhotoScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  side: const BorderSide(color: Colors.white70),
+                  side: BorderSide(
+                    color: Theme.of(context).brightness == Brightness.dark 
+                        ? Colors.white70 
+                        : Colors.grey.shade600),
                 ),
-                child: const Text(
+                child: Text(
                   'Cancelar',
-                  style: TextStyle(color: Colors.white70),
+                  style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark 
+                        ? Colors.white70 
+                        : Colors.grey.shade600),
                 ),
               ),
             ),
@@ -89,41 +95,53 @@ class ChangePhotoScreen extends StatelessWidget {
   }
 
   Widget _buildOption(IconData icon, String title, String subtitle, VoidCallback onTap, {bool isDestructive = false}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300.withValues(alpha: 0.3)),
-      ),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(8),
+    return Builder(
+      builder: (context) {
+        return Container(
           decoration: BoxDecoration(
-            color: isDestructive 
-                ? Colors.red.withValues(alpha: 0.1)
-                : const Color(0xFF00294F).withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
+            color: Colors.white.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300.withValues(alpha: 0.3)),
           ),
-          child: Icon(
-            icon, 
-            color: isDestructive ? Colors.red : const Color(0xFF00294F),
+          child: ListTile(
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isDestructive 
+                    ? Colors.red.withValues(alpha: 0.1)
+                    : const Color(0xFF00294F).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon, 
+                color: isDestructive ? Colors.red : const Color(0xFF00294F),
+              ),
+            ),
+            title: Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: isDestructive 
+                    ? Colors.red 
+                    : (Theme.of(context).brightness == Brightness.dark 
+                        ? Colors.white 
+                        : Colors.black),
+              ),
+            ),
+            subtitle: Text(
+              subtitle,
+              style: TextStyle(
+                color: isDestructive 
+                    ? Colors.red.withValues(alpha: 0.7) 
+                    : (Theme.of(context).brightness == Brightness.dark 
+                        ? Colors.white70 
+                        : Colors.black54),
+              ),
+            ),
+            onTap: onTap,
           ),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: isDestructive ? Colors.red : Colors.white,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(
-            color: isDestructive ? Colors.red.withValues(alpha: 0.7) : Colors.white70,
-          ),
-        ),
-        onTap: onTap,
-      ),
+        );
+      },
     );
   }
 }

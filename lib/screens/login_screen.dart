@@ -219,9 +219,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 elevation: 2,
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Entrar',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w600),
                               ),
                             ),
@@ -229,9 +229,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(height: 16),
                           TextButton(
                             onPressed: () {},
-                            child: const Text(
+                            child: Text(
                               'Esqueceu a senha?',
-                              style: TextStyle(color: Colors.white),
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ),
                         ],

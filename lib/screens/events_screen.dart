@@ -108,7 +108,7 @@ class _EventsScreenState extends State<EventsScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Foto do evento',
+                                    'Imagem do evento',
                                     style: TextStyle(
                                       color: Colors.grey.shade600,
                                       fontSize: 12,
@@ -253,7 +253,7 @@ class _EventsScreenState extends State<EventsScreen> {
                                     ),
                                     const SizedBox(height: 12),
                                     Text(
-                                      'Foto do evento',
+                                      'Imagem do evento',
                                       style: TextStyle(
                                         color: Colors.grey.shade600,
                                         fontSize: 16,
@@ -271,9 +271,12 @@ class _EventsScreenState extends State<EventsScreen> {
                         Expanded(
                           child: Text(
                             event['title'] as String,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
+                              color: Theme.of(context).brightness == Brightness.dark 
+                                  ? Colors.white 
+                                  : Colors.black,
                             ),
                           ),
                         ),
@@ -298,7 +301,9 @@ class _EventsScreenState extends State<EventsScreen> {
                       event['description'] as String,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.grey.shade700,
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white70 
+                            : Colors.grey.shade700,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -353,17 +358,25 @@ class _EventsScreenState extends State<EventsScreen> {
   }
 
   Widget _buildInfoRow(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: Colors.grey.shade600),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ),
-      ],
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Row(
+          children: [
+            Icon(icon, size: 20, color: Colors.grey.shade600),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

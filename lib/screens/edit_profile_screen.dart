@@ -100,7 +100,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               controller: _nameController,
               decoration: InputDecoration(
                 labelText: 'Nome',
-                prefixIcon: const Icon(Icons.person_outlined, color: Colors.white70),
+                prefixIcon: Icon(Icons.person_outlined, 
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.white70 
+                      : Colors.grey.shade600),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(color: Colors.grey.shade300),
@@ -113,11 +116,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(color: Color(0xFF00294F), width: 2),
                 ),
-                labelStyle: const TextStyle(color: Colors.white70),
+                labelStyle: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.white70 
+                      : Colors.grey.shade600),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.1),
+                fillColor: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.white.withValues(alpha: 0.1) 
+                    : Colors.grey.shade50,
               ),
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.white 
+                    : Colors.black),
             ),
             const SizedBox(height: 20),
             
@@ -126,9 +137,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               controller: _usernameController,
               decoration: InputDecoration(
                 labelText: 'Nome de usuário',
-                prefixIcon: const Icon(Icons.alternate_email, color: Colors.white70),
+                prefixIcon: Icon(Icons.alternate_email, 
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.white70 
+                      : Colors.grey.shade600),
                 prefixText: '@',
-                prefixStyle: const TextStyle(color: Colors.white70),
+                prefixStyle: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.white70 
+                      : Colors.grey.shade600),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(color: Colors.grey.shade300),
@@ -141,11 +158,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(color: Color(0xFF00294F), width: 2),
                 ),
-                labelStyle: const TextStyle(color: Colors.white70),
+                labelStyle: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.white70 
+                      : Colors.grey.shade600),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.1),
+                fillColor: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.white.withValues(alpha: 0.1) 
+                    : Colors.grey.shade50,
               ),
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.white 
+                    : Colors.black),
             ),
             const SizedBox(height: 20),
             
@@ -155,7 +180,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               maxLines: 4,
               decoration: InputDecoration(
                 labelText: 'Bio',
-                prefixIcon: const Icon(Icons.edit_outlined, color: Colors.white70),
+                prefixIcon: Icon(Icons.edit_outlined, 
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.white70 
+                      : Colors.grey.shade600),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(color: Colors.grey.shade300),
@@ -168,12 +196,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(color: Color(0xFF00294F), width: 2),
                 ),
-                labelStyle: const TextStyle(color: Colors.white70),
+                labelStyle: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.white70 
+                      : Colors.grey.shade600),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.1),
+                fillColor: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.white.withValues(alpha: 0.1) 
+                    : Colors.grey.shade50,
                 alignLabelWithHint: true,
               ),
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.white 
+                    : Colors.black),
             ),
             const SizedBox(height: 40),
             
@@ -190,11 +226,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      side: const BorderSide(color: Colors.white70),
+                      side: BorderSide(
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white70 
+                            : Colors.grey.shade600),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Cancelar',
-                      style: TextStyle(color: Colors.white70),
+                      style: TextStyle(
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white70 
+                            : Colors.grey.shade600),
                     ),
                   ),
                 ),

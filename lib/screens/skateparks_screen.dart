@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
+
 class SkateparksScreen extends StatefulWidget {
   const SkateparksScreen({super.key});
 
@@ -64,9 +65,9 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Pistas',
-          style: TextStyle(fontWeight: FontWeight.w900),
+          style: const TextStyle(fontWeight: FontWeight.w900),
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -243,9 +244,12 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                     Expanded(
                       child: Text(
                         park['name'] as String,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
+                          color: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.white 
+                              : Colors.black,
                         ),
                       ),
                     ),
@@ -270,7 +274,9 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                   park['description'] as String,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey.shade700,
+                    color: Theme.of(context).brightness == Brightness.dark 
+                        ? Colors.white70 
+                        : Colors.grey.shade700,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -286,16 +292,24 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                     const SizedBox(width: 8),
                     Text(
                       '${park['rating']} estrelas',
-                      style: const TextStyle(fontSize: 16),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white 
+                            : Colors.black,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Estruturas',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: Theme.of(context).brightness == Brightness.dark 
+                        ? Colors.white 
+                        : Colors.black,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -304,7 +318,10 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                   runSpacing: 8,
                   children: (park['features'] as List<String>).map((feature) => 
                     Chip(
-                      label: Text(feature),
+                      label: Text(
+                        feature,
+                        style: const TextStyle(color: Colors.black),
+                      ),
                       backgroundColor: Colors.grey.shade200,
                     ),
                   ).toList(),
@@ -323,7 +340,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Text('Como Chegar'),
+                            child: Text('Como Chegar'),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -336,7 +353,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Text('Favoritar'),
+                            child: Text('Favoritar'),
                           ),
                         ),
                       ],
@@ -616,17 +633,25 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
   }
 
   Widget _buildInfoRow(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: Colors.grey.shade600),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ),
-      ],
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Row(
+          children: [
+            Icon(icon, size: 20, color: Colors.grey.shade600),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

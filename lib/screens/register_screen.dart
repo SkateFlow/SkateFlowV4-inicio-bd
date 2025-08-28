@@ -340,9 +340,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                                 elevation: 2,
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Cadastrar',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w600),
                               ),
                             ),

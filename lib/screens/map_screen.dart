@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
+
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
 
@@ -75,7 +76,7 @@ class _MapScreenState extends State<MapScreen> {
             ),
             infoWindow: InfoWindow(
               title: park['name'] as String,
-              snippet: 'Toque para detalhes',
+              snippet: 'Toque para mais detalhes',
             ),
             onTap: () => _showParkDetails(park['id'] as String),
           ),
@@ -87,64 +88,95 @@ class _MapScreenState extends State<MapScreen> {
   void _showParkDetails(String parkId) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => Container(
-        height: 300,
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Skatepark Central',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Container(
+          height: 300,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF2C2C2C) : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Skatepark Central',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            const Row(
-              children: [
-                Icon(Icons.location_on, size: 16),
-                SizedBox(width: 4),
-                Text('Av. Paulista, 1000'),
-              ],
-            ),
-            const SizedBox(height: 4),
-            const Row(
-              children: [
-                Icon(Icons.access_time, size: 16),
-                SizedBox(width: 4),
-                Text('Aberto das 8h às 22h'),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Estruturas',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Icon(Icons.location_on, size: 16, color: isDark ? Colors.white70 : Colors.black54),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Av. Paulista, 1000',
+                    style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 8),
-            const Wrap(
-              spacing: 8,
-              children: [
-                Chip(label: Text('Bowl')),
-                Chip(label: Text('Street')),
-                Chip(label: Text('Half-pipe')),
-                Chip(label: Text('Corrimão')),
-              ],
-            ),
-            const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {},
-                child: const Text('Ver Detalhes'),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Icon(Icons.access_time, size: 16, color: isDark ? Colors.white70 : Colors.black54),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Aberto das 8h às 22h',
+                    style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ),
+              const SizedBox(height: 16),
+              Text(
+                'Estruturas',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: [
+                  Chip(
+                    label: Text('Bowl', style: TextStyle(color: Colors.black)),
+                    backgroundColor: Colors.grey.shade200,
+                  ),
+                  Chip(
+                    label: Text('Street', style: TextStyle(color: Colors.black)),
+                    backgroundColor: Colors.grey.shade200,
+                  ),
+                  Chip(
+                    label: Text('Half-pipe', style: TextStyle(color: Colors.black)),
+                    backgroundColor: Colors.grey.shade200,
+                  ),
+                  Chip(
+                    label: Text('Corrimão', style: TextStyle(color: Colors.black)),
+                    backgroundColor: Colors.grey.shade200,
+                  ),
+                ],
+              ),
+              const Spacer(),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDark ? Colors.white : Colors.black,
+                    foregroundColor: isDark ? Colors.black : Colors.white,
+                  ),
+                  child: Text('Como Chegar'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -152,9 +184,9 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Pistas Próximas',
-          style: TextStyle(fontWeight: FontWeight.w900),
+        title: Text(
+          'Mapa',
+          style: const TextStyle(fontWeight: FontWeight.w900),
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -174,7 +206,13 @@ class _MapScreenState extends State<MapScreen> {
         ],
       ),
       body: _currentPosition == null
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.white 
+                    : Colors.black,
+              ),
+            )
           : GoogleMap(
               initialCameraPosition: CameraPosition(
                 target: LatLng(
