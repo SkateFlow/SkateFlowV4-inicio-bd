@@ -66,19 +66,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(height: 40),
-                    const Icon(
-                      Icons.skateboarding,
-                      size: 80,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'SkateFlow',
-                      style: TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    Image.asset(
+                      'assets/images/skateparks/logo-branca.png',
+                      height: 234,
+                      width: 234,
                     ),
                     const SizedBox(height: 8),
                     Text(

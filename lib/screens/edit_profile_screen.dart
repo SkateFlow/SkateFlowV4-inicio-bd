@@ -21,15 +21,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           'Editar Perfil',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF00294F), Color(0xFF001426), Color(0xFF010A12), Color(0xFF00294F)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+        backgroundColor: const Color(0xFF2C2C2C),
         foregroundColor: Colors.white,
         actions: [
           TextButton(

@@ -45,15 +45,7 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
           'Notificações',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF00294F), Color(0xFF001426), Color(0xFF010A12), Color(0xFF00294F)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+        backgroundColor: const Color(0xFF1F1F1F),
         foregroundColor: Colors.white,
       ),
       body: ListView(

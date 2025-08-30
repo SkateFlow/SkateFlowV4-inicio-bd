@@ -54,19 +54,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.skateboarding,
-                      size: 80,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'SkateFlow',
-                      style: TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    Image.asset(
+                      'assets/images/skateparks/logo-branca.png',
+                      height: 260,
+                      width: 260,
                     ),
                     const SizedBox(height: 8),
                     Text(

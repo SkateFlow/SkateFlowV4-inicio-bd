@@ -11,20 +11,7 @@ class ManageAccountScreen extends StatelessWidget {
           'Gerenciar Conta',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFF00294F),
-                Color(0xFF001426),
-                Color(0xFF010A12),
-                Color(0xFF00294F)
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+        backgroundColor: const Color(0xFF1F1F1F),
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -125,7 +112,12 @@ class ManageAccountScreen extends StatelessWidget {
               'Alterar Email',
               'Modifique o email associado à sua conta',
               () {
-                _showChangeEmailDialog(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ChangeEmailScreen(),
+                  ),
+                );
               },
             ),
 
@@ -264,50 +256,7 @@ class ManageAccountScreen extends StatelessWidget {
     );
   }
 
-  void _showChangeEmailDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Alterar Email'),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Novo email',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Senha atual',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text(
-                        'Email será alterado após implementação do banco de dados')),
-              );
-            },
-            child: const Text('Alterar'),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   void _showTwoFactorDialog(BuildContext context) {
     showDialog(
@@ -412,6 +361,154 @@ class ManageAccountScreen extends StatelessWidget {
   }
 }
 
+class ChangeEmailScreen extends StatefulWidget {
+  const ChangeEmailScreen({super.key});
+
+  @override
+  State<ChangeEmailScreen> createState() => _ChangeEmailScreenState();
+}
+
+class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
+  final _formKey = GlobalKey<FormState>();
+  bool _obscurePassword = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Alterar Email',
+          style: TextStyle(fontWeight: FontWeight.w900),
+        ),
+        backgroundColor: const Color(0xFF1F1F1F),
+        foregroundColor: Colors.white,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF00294F).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                      color: const Color.fromARGB(255, 7, 48, 87)
+                          .withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.info_outline, color: Color(0xFF00294F)),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Você receberá um email de confirmação no novo endereço antes da alteração ser efetivada.',
+                        style: TextStyle(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white70
+                              : const Color.fromARGB(255, 7, 48, 87),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Email Atual',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  enabled: false,
+                ),
+                initialValue: 'carlos.silva@email.com',
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  labelText: 'Novo Email',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Digite o novo email';
+                  }
+                  if (!value.contains('@')) {
+                    return 'Digite um email válido';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
+                  labelText: 'Senha Atual',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscurePassword
+                        ? Icons.visibility
+                        : Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Digite sua senha atual';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                                'Email será alterado após implementação do banco de dados')),
+                      );
+                      Navigator.pop(context);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF00294F),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Alterar Email',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
 
@@ -433,20 +530,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           'Alterar Senha',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFF00294F),
-                Color(0xFF001426),
-                Color(0xFF010A12),
-                Color(0xFF00294F)
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+        backgroundColor: const Color(0xFF1F1F1F),
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(

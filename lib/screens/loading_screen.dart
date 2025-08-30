@@ -24,27 +24,18 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0637),
-      body: const Center(
+      backgroundColor: const Color(0xFF3C3C3C),
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.skateboarding,
-              size: 80,
-              color: Colors.white,
+            Image.asset(
+              'assets/images/skateparks/logo-branca.png',
+              height: 234,
+              width: 234,
             ),
-            SizedBox(height: 24),
-            Text(
-              'SkateFlow',
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(height: 40),
-            CircularProgressIndicator(
+            const SizedBox(height: 40),
+            const CircularProgressIndicator(
               color: Colors.white,
             ),
           ],

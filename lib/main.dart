@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/loading_screen.dart';
@@ -10,6 +11,8 @@ import 'screens/profile_screen.dart';
 import 'screens/settings_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const SkateApp());
 }
 
@@ -48,7 +51,7 @@ class _SkateAppState extends State<SkateApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Skate Spots',
+      title: 'SkateFlow',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

@@ -37,8 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _loadNearbyParks() {
     final parks = [
-      {'name': 'Skatepark Central', 'lat': -23.550520, 'lng': -46.633308},
-      {'name': 'Bowl da Liberdade', 'lat': -23.555550, 'lng': -46.639999},
+      {'name': 'Skate City', 'lat': -23.5505, 'lng': -46.6333},
+      {'name': 'Rajas Skatepark', 'lat': -23.5729, 'lng': -46.6412},
+      {'name': 'Quadespra', 'lat': -23.5200, 'lng': -46.6094},
     ];
 
     setState(() {
@@ -48,7 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
           Marker(
             markerId: MarkerId(park['name'] as String),
             position: LatLng(park['lat'] as double, park['lng'] as double),
-            infoWindow: InfoWindow(title: park['name'] as String),
+            infoWindow: InfoWindow(
+              title: park['name'] as String,
+              snippet: 'Toque para mais detalhes',
+            ),
           ),
         );
       }
@@ -132,20 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'SkateFlow',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFF00294F),
-                Color(0xFF001426),
-                Color(0xFF010A12),
-                Color(0xFF00294F)
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+        backgroundColor: const Color(0xFF1F1F1F),
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
@@ -172,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey.shade900,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(20),
                   bottomRight: Radius.circular(20),
@@ -183,8 +174,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text(
                     'Olá, Skatista!',
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.white 
+                          : Colors.black,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -193,7 +186,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text(
                     'Encontre as melhores pistas e eventos',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.8),
+                      color: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.white.withValues(alpha: 0.8) 
+                          : Colors.black.withValues(alpha: 0.7),
                       fontSize: 16,
                     ),
                   ),
@@ -232,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(
-              height: 140,
+              height: 160,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -242,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   return GestureDetector(
                     onTap: () => _showEventDetails(context, event),
                     child: Container(
-                      width: 300,
+                      width: 320,
                       margin: const EdgeInsets.only(right: 12),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade300,
@@ -285,21 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                   ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade600,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      '${event['participants']} pessoas',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ),
+
                                 ],
                               ),
                               const SizedBox(height: 12),
@@ -328,17 +309,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 6),
+                              const SizedBox(height: 12),
                               Row(
                                 children: [
                                   const Icon(Icons.location_on,
-                                      color: Colors.black54, size: 16),
+                                      color: Colors.black54, size: 18),
                                   const SizedBox(width: 6),
                                   Expanded(
                                     child: Text(
                                       event['location'] as String,
                                       style: const TextStyle(
-                                          color: Colors.black54),
+                                          color: Colors.black54, fontSize: 15),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -391,14 +372,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(16),
                     leading: Container(
-                      width: 50,
-                      height: 50,
+                      width: 60,
+                      height: 60,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade800,
-                        borderRadius: BorderRadius.circular(25),
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      child: const Icon(Icons.skateboarding,
-                          color: Colors.white, size: 24),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(30),
+                        child: Image.asset(
+                          (park['images'] as List<String>)[0],
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey.shade800,
+                              child: const Icon(Icons.skateboarding,
+                                  color: Colors.white, size: 24),
+                            );
+                          },
+                        ),
+                      ),
                     ),
                     title: Text(
                       park['name'] as String,
@@ -476,33 +468,49 @@ class _HomeScreenState extends State<HomeScreen> {
                         : Colors.black),
               ),
             ),
-            Container(
-              height: 300,
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade700),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: _currentPosition == null
-                    ? Container(
-                        color: Colors.grey.shade800,
-                        child: const Center(
-                          child: CircularProgressIndicator(color: Colors.white),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const MainScreen(initialIndex: 2),
+                  ),
+                );
+              },
+              child: Container(
+                height: 350,
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade700),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: _currentPosition == null
+                      ? Container(
+                          color: Colors.grey.shade800,
+                          child: const Center(
+                            child: CircularProgressIndicator(color: Colors.white),
+                          ),
+                        )
+                      : GoogleMap(
+                          initialCameraPosition: CameraPosition(
+                            target: LatLng(_currentPosition!.latitude,
+                                _currentPosition!.longitude),
+                            zoom: 12,
+                          ),
+                          markers: _markers,
+                          myLocationEnabled: true,
+                          zoomControlsEnabled: false,
+                          mapToolbarEnabled: false,
+                          onTap: (_) {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => const MainScreen(initialIndex: 2),
+                              ),
+                            );
+                          },
                         ),
-                      )
-                    : GoogleMap(
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(_currentPosition!.latitude,
-                              _currentPosition!.longitude),
-                          zoom: 12,
-                        ),
-                        markers: _markers,
-                        myLocationEnabled: true,
-                        zoomControlsEnabled: false,
-                        mapToolbarEnabled: false,
-                      ),
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -532,9 +540,9 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.8,
+        initialChildSize: 0.9,
         maxChildSize: 0.95,
-        minChildSize: 0.6,
+        minChildSize: 0.7,
         builder: (context, scrollController) => Column(
           children: [
             Container(
@@ -694,9 +702,9 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.8,
+        initialChildSize: 0.9,
         maxChildSize: 0.95,
-        minChildSize: 0.6,
+        minChildSize: 0.7,
         builder: (context, scrollController) => Column(
           children: [
             Container(
@@ -885,54 +893,32 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
               itemBuilder: (context, index) {
-                return GestureDetector(
-                  onPanUpdate: (details) {
-                    // Detecta movimento horizontal para arrastar
-                    if (details.delta.dx > 10) {
-                      // Arrastar para a direita - imagem anterior
-                      if (currentModalPage > 0) {
-                        modalController.previousPage(
-                          duration: const Duration(milliseconds: 120),
-                          curve: Curves.fastEaseInToSlowEaseOut,
-                        );
-                      }
-                    } else if (details.delta.dx < -10) {
-                      // Arrastar para a esquerda - próxima imagem
-                      if (currentModalPage < images.length - 1) {
-                        modalController.nextPage(
-                          duration: const Duration(milliseconds: 120),
-                          curve: Curves.fastEaseInToSlowEaseOut,
-                        );
-                      }
-                    }
-                  },
-                  child: Image.asset(
-                    images[index],
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey.shade300,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.skateboarding,
-                              size: 60,
+                return Image.asset(
+                  images[index],
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey.shade300,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.skateboarding,
+                            size: 60,
+                            color: Colors.grey.shade600,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Imagem não encontrada',
+                            style: TextStyle(
                               color: Colors.grey.shade600,
+                              fontSize: 16,
                             ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Imagem não encontrada',
-                              style: TextStyle(
-                                color: Colors.grey.shade600,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 );
               },
             ),

@@ -44,192 +44,192 @@ class HelpScreen extends StatelessWidget {
           'Ajuda',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF00294F), Color(0xFF001426), Color(0xFF010A12), Color(0xFF00294F)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+        backgroundColor: const Color(0xFF1F1F1F),
         foregroundColor: Colors.white,
       ),
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark 
-                  ? const Color(0xFF2C2C2C) 
-                  : Colors.white,
-              border: Border(bottom: BorderSide(
-                color: Theme.of(context).brightness == Brightness.dark 
-                    ? Colors.grey.shade700 
-                    : Colors.grey.shade200,
-              )),
-            ),
-            child: Column(
-              children: [
-                Icon(
-                  Icons.support_agent,
-                  size: 60,
-                  color: const Color(0xFF00294F),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Como podemos ajudar?',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).brightness == Brightness.dark 
-                        ? Colors.white 
-                        : Colors.black,
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFF2C2C2C)
+                    : Colors.white,
+                border: Border(
+                    bottom: BorderSide(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : Colors.grey.shade200,
+                )),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.support_agent,
+                    size: 60,
+                    color: const Color(0xFF00294F),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Encontre respostas para suas dúvidas',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF00294F), Color(0xFF043C70)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                  const SizedBox(height: 12),
+                  Text(
+                    'Como podemos ajudar?',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
                     ),
-                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Column(
-                    children: [
-                      const Icon(
-                        Icons.phone,
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Suporte por Telefone',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        '(11) 94567-8901',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Segunda a Sexta, 9h às 18h',
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: 8),
+                  Text(
+                    'Encontre respostas para suas dúvidas',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade600,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF00294F), Color(0xFF043C70)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      children: [
+                        const Icon(
+                          Icons.phone,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Suporte por Telefone',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          '(11) 94567-8901',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Segunda a Sexta, 9h às 18h',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.8),
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: helpItems.length,
-              itemBuilder: (context, index) {
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
                 final item = helpItems[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  elevation: 1,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(16),
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF00294F).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        item['icon'] as IconData,
-                        color: const Color(0xFF00294F),
-                        size: 24,
-                      ),
-                    ),
-                    title: Text(
-                      item['title'] as String,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
-                    ),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(
-                        item['subtitle'] as String,
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 14,
+                return Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Card(
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(16),
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF00294F).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          item['icon'] as IconData,
+                          color: const Color(0xFF00294F),
+                          size: 24,
                         ),
                       ),
+                      title: Text(
+                        item['title'] as String,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          item['subtitle'] as String,
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () {
+                        _showHelpDetail(context, item);
+                      },
                     ),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {
-                      _showHelpDetail(context, item);
-                    },
                   ),
                 );
               },
+              childCount: helpItems.length,
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Text(
-                  'Ainda precisa de ajuda?',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).brightness == Brightness.dark 
-                        ? Colors.white 
-                        : Colors.black,
+          SliverToBoxAdapter(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Text(
+                    'Ainda precisa de ajuda?',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/settings');
-                    },
-                    icon: const Icon(Icons.contact_support),
-                    label: const Text('Outras Opções de Contato'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00294F),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/settings');
+                      },
+                      icon: const Icon(Icons.contact_support),
+                      label: const Text('Outras Opções de Contato'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00294F),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -260,21 +260,21 @@ class HelpScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
               Icon(
                 item['icon'] as IconData,
-                size: 48,
+                size: 40,
                 color: const Color(0xFF00294F),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               Text(
                 item['title'] as String,
                 style: const TextStyle(
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
               Expanded(
                 child: SingleChildScrollView(
                   controller: scrollController,
@@ -303,7 +303,7 @@ class HelpScreen extends StatelessWidget {
             '• A aba "Pistas" mostra uma lista completa com filtros\n'
             '• Em "Eventos" você encontra todos os eventos disponíveis\n'
             '• Seu "Perfil" permite personalizar suas informações';
-      
+
       case 'Encontrar pistas':
         return 'Para encontrar pistas próximas a você:\n\n'
             '• Permita o acesso à sua localização quando solicitado\n'
@@ -311,7 +311,7 @@ class HelpScreen extends StatelessWidget {
             '• Filtre por tipo de pista (Street, Bowl, Plaza)\n'
             '• Veja avaliações e distância de cada pista\n'
             '• Toque em uma pista para ver mais detalhes';
-      
+
       case 'Participar de eventos':
         return 'Para participar de eventos:\n\n'
             '• Acesse a aba "Eventos" para ver todos os eventos disponíveis\n'
@@ -319,7 +319,7 @@ class HelpScreen extends StatelessWidget {
             '• Use o botão "Agendar Ingresso" para se inscrever\n'
             '• Adicione eventos aos favoritos para não esquecer\n'
             '• Receba notificações sobre eventos próximos';
-      
+
       case 'Gerenciar perfil':
         return 'Para gerenciar seu perfil:\n\n'
             '• Acesse a aba "Perfil"\n'
@@ -327,14 +327,14 @@ class HelpScreen extends StatelessWidget {
             '• Adicione uma foto de perfil\n'
             '• Atualize sua bio e informações pessoais\n'
             '• Configure suas preferências de notificação';
-      
+
       case 'Favoritar pistas':
         return 'Para salvar suas pistas favoritas:\n\n'
-            '• Toque no ícone de coração em qualquer pista\n'
+            '• Toque no botão "Favoritar" em qualquer pista\n'
             '• Acesse suas pistas favoritas através do menu do perfil\n'
-            '• Remova pistas dos favoritos tocando no coração novamente\n'
+            '• Remova pistas dos favoritos tocando no coração\n'
             '• Use os favoritos para acesso rápido às suas pistas preferidas';
-      
+
       case 'Problemas técnicos':
         return 'Soluções para problemas comuns:\n\n'
             '• Se o mapa não carregar, verifique sua conexão com a internet\n'
@@ -342,7 +342,7 @@ class HelpScreen extends StatelessWidget {
             '• Se o app estiver lento, tente reiniciá-lo\n'
             '• Para outros problemas, use a opção "Reportar Problema" nas configurações\n'
             '• Mantenha o app sempre atualizado';
-      
+
       default:
         return 'Informações de ajuda não disponíveis para este tópico.';
     }

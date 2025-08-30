@@ -13,6 +13,19 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
   final Map<int, PageController> _pageControllers = {};
   final Map<int, int> _currentPages = {};
   final Map<int, Timer> _timers = {};
+  
+  // Filtros
+  String _selectedDistance = 'Todas';
+  double _selectedRating = 0.0;
+  String _selectedType = 'Todos';
+  String _selectedHours = 'Todos';
+  List<Map<String, dynamic>> _filteredSkateparks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _applyFilters();
+  }
 
   @override
   void dispose() {
@@ -25,8 +38,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
+  void _applyFilters() {
     final skateparks = [
       {
         'name': 'Skate City',
@@ -63,38 +75,99 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
       },
     ];
 
+    setState(() {
+      _filteredSkateparks = skateparks.where((park) {
+        // Filtro por distância
+        if (_selectedDistance != 'Todas') {
+          double distance = double.parse((park['distance'] as String).replaceAll(' km', ''));
+          switch (_selectedDistance) {
+            case 'Até 1 km':
+              if (distance > 1.0) return false;
+              break;
+            case '1-3 km':
+              if (distance <= 1.0 || distance > 3.0) return false;
+              break;
+            case 'Mais de 3 km':
+              if (distance <= 3.0) return false;
+              break;
+          }
+        }
+
+        // Filtro por avaliação
+        if (_selectedRating > 0 && (park['rating'] as double) < _selectedRating) {
+          return false;
+        }
+
+        // Filtro por tipo
+        if (_selectedType != 'Todos' && park['type'] != _selectedType) {
+          return false;
+        }
+
+        // Filtro por horário
+        if (_selectedHours != 'Todos') {
+          String hours = park['hours'] as String;
+          switch (_selectedHours) {
+            case 'Manhã (6h-12h)':
+              if (!hours.contains('6h') && !hours.contains('7h') && !hours.contains('8h')) return false;
+              break;
+            case 'Tarde (12h-18h)':
+              if (!hours.contains('18h') && !hours.contains('20h') && !hours.contains('22h')) return false;
+              break;
+            case 'Noite (18h-22h)':
+              if (!hours.contains('20h') && !hours.contains('22h')) return false;
+              break;
+          }
+        }
+
+        return true;
+      }).toList();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        automaticallyImplyLeading: false,
+        title: const Text(
           'Pistas',
-          style: const TextStyle(fontWeight: FontWeight.w900),
+          style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF00294F), Color(0xFF001426), Color(0xFF010A12), Color(0xFF00294F)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+        backgroundColor: const Color(0xFF2C2C2C),
         foregroundColor: Colors.white,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {},
+          Container(
+            width: 200,
+            margin: const EdgeInsets.only(right: 8),
+            height: 40,
+            child: TextField(
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Pesquisar pistas...',
+                hintStyle: const TextStyle(color: Colors.white70),
+                prefixIcon: const Icon(Icons.search, color: Colors.white70),
+                filled: true,
+                fillColor: Colors.white.withValues(alpha: 0.1),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+              ),
+            ),
           ),
           IconButton(
             icon: const Icon(Icons.filter_list),
-            onPressed: () {},
+            onPressed: () => _showFiltersDialog(context),
           ),
         ],
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: skateparks.length,
+        itemCount: _filteredSkateparks.length,
         itemBuilder: (context, index) {
-          final park = skateparks[index];
+          final park = _filteredSkateparks[index];
 
           
           return Card(
@@ -205,9 +278,9 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.8,
+        initialChildSize: 0.9,
         maxChildSize: 0.95,
-        minChildSize: 0.6,
+        minChildSize: 0.7,
         builder: (context, scrollController) => Column(
           children: [
             Container(
@@ -237,7 +310,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                     child: _buildModalImageCarousel(park['images'] as List<String>),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -340,7 +413,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: Text('Como Chegar'),
+                            child: const Text('Como Chegar'),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -353,7 +426,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: Text('Favoritar'),
+                            child: const Text('Favoritar'),
                           ),
                         ),
                       ],
@@ -652,6 +725,212 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
           ],
         );
       },
+    );
+  }
+
+  void _showFiltersDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.5),
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF2C2C2C) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Filtros',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      
+                      // Filtro de Distância
+                      _buildFilterSection('Distância', Icons.location_on, isDark, [
+                        _buildRadioOption('Todas', _selectedDistance, (value) {
+                          setDialogState(() => _selectedDistance = value!);
+                        }, isDark),
+                        _buildRadioOption('Até 1 km', _selectedDistance, (value) {
+                          setDialogState(() => _selectedDistance = value!);
+                        }, isDark),
+                        _buildRadioOption('1-3 km', _selectedDistance, (value) {
+                          setDialogState(() => _selectedDistance = value!);
+                        }, isDark),
+                        _buildRadioOption('Mais de 3 km', _selectedDistance, (value) {
+                          setDialogState(() => _selectedDistance = value!);
+                        }, isDark),
+                      ]),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Filtro de Avaliação
+                      _buildFilterSection('Avaliação Mínima', Icons.star, isDark, [
+                        Slider(
+                          value: _selectedRating,
+                          min: 0.0,
+                          max: 5.0,
+                          divisions: 10,
+                          label: _selectedRating == 0.0 ? 'Todas' : '${_selectedRating.toStringAsFixed(1)} estrelas',
+                          onChanged: (value) {
+                            setDialogState(() => _selectedRating = value);
+                          },
+                        ),
+                      ]),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Filtro de Tipo
+                      _buildFilterSection('Tipo de Pista', Icons.skateboarding, isDark, [
+                        _buildRadioOption('Todos', _selectedType, (value) {
+                          setDialogState(() => _selectedType = value!);
+                        }, isDark),
+                        _buildRadioOption('Street', _selectedType, (value) {
+                          setDialogState(() => _selectedType = value!);
+                        }, isDark),
+                        _buildRadioOption('Bowl', _selectedType, (value) {
+                          setDialogState(() => _selectedType = value!);
+                        }, isDark),
+                        _buildRadioOption('Plaza', _selectedType, (value) {
+                          setDialogState(() => _selectedType = value!);
+                        }, isDark),
+                      ]),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Filtro de Horário
+                      _buildFilterSection('Horário', Icons.access_time, isDark, [
+                        _buildRadioOption('Todos', _selectedHours, (value) {
+                          setDialogState(() => _selectedHours = value!);
+                        }, isDark),
+                        _buildRadioOption('Manhã (6h-12h)', _selectedHours, (value) {
+                          setDialogState(() => _selectedHours = value!);
+                        }, isDark),
+                        _buildRadioOption('Tarde (12h-18h)', _selectedHours, (value) {
+                          setDialogState(() => _selectedHours = value!);
+                        }, isDark),
+                        _buildRadioOption('Noite (18h-22h)', _selectedHours, (value) {
+                          setDialogState(() => _selectedHours = value!);
+                        }, isDark),
+                      ]),
+                      
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {
+                                setDialogState(() {
+                                  _selectedDistance = 'Todas';
+                                  _selectedRating = 0.0;
+                                  _selectedType = 'Todos';
+                                  _selectedHours = 'Todos';
+                                });
+                              },
+                              child: const Text('Limpar'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                _applyFilters();
+                                Navigator.pop(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: isDark ? Colors.white : Colors.black,
+                                foregroundColor: isDark ? Colors.black : Colors.white,
+                              ),
+                              child: const Text('Aplicar'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildFilterSection(String title, IconData icon, bool isDark, List<Widget> children) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, color: isDark ? Colors.white70 : Colors.black54, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ...children,
+      ],
+    );
+  }
+
+  Widget _buildRadioOption(String title, String groupValue, ValueChanged<String?> onChanged, bool isDark) {
+    bool isSelected = title == groupValue;
+    return InkWell(
+      onTap: () => onChanged(title),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: Row(
+          children: [
+            Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected ? Colors.blue : Colors.grey,
+                  width: 2,
+                ),
+                color: isSelected ? Colors.blue : Colors.transparent,
+              ),
+              child: isSelected
+                  ? const Icon(
+                      Icons.check,
+                      size: 14,
+                      color: Colors.white,
+                    )
+                  : null,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              title,
+              style: TextStyle(
+                color: isDark ? Colors.white : Colors.black,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
