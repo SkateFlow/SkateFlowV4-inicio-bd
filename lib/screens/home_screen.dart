@@ -136,7 +136,15 @@ class _HomeScreenState extends State<HomeScreen> {
           'SkateFlow',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        backgroundColor: const Color(0xFF1F1F1F),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF3888D2), Color(0xFF043C70)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
@@ -187,8 +195,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     'Encontre as melhores pistas e eventos',
                     style: TextStyle(
                       color: Theme.of(context).brightness == Brightness.dark 
-                          ? Colors.white.withValues(alpha: 0.8) 
-                          : Colors.black.withValues(alpha: 0.7),
+                          ? Colors.white.withOpacity(0.8) 
+                          : Colors.black.withOpacity(0.7),
                       fontSize: 16,
                     ),
                   ),
@@ -938,9 +946,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         shape: BoxShape.circle,
                         color: currentModalPage == entry.key
                             ? Colors.white
-                            : Colors.white.withValues(alpha: 0.4),
+                            : Colors.white.withOpacity(0.4),
                         border: Border.all(
-                          color: Colors.black.withValues(alpha: 0.3),
+                          color: Colors.black.withOpacity(0.3),
                           width: 1,
                         ),
                       ),
@@ -956,7 +964,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.7),
+                    color: Colors.black.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -1003,7 +1011,7 @@ class _HomeScreenState extends State<HomeScreen> {
     
     showDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.5),
+      barrierColor: Colors.black.withOpacity(0.5),
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
         child: Container(

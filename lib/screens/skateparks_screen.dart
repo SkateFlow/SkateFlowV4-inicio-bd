@@ -128,6 +128,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      backgroundColor: const Color(0xFF043C70),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text(
@@ -148,7 +149,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 hintStyle: const TextStyle(color: Colors.white70),
                 prefixIcon: const Icon(Icons.search, color: Colors.white70),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.1),
+                fillColor: Colors.white.withOpacity(0.1),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide.none,
@@ -199,7 +200,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                               end: Alignment.bottomCenter,
                               colors: [
                                 Colors.transparent,
-                                Colors.black.withValues(alpha: 0.7),
+                                Colors.black.withOpacity(0.7),
                               ],
                             ),
                           ),
@@ -223,7 +224,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.2),
+                                      color: Colors.white.withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -530,7 +531,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                     shape: BoxShape.circle,
                     color: _currentPages[carouselIndex] == entry.key
                         ? Colors.white
-                        : Colors.white.withValues(alpha: 0.4),
+                        : Colors.white.withOpacity(0.4),
                   ),
                 );
               }).toList(),
@@ -556,7 +557,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.5),
+                    color: Colors.black.withOpacity(0.5),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -586,7 +587,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.5),
+                    color: Colors.black.withOpacity(0.5),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -667,9 +668,9 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                         shape: BoxShape.circle,
                         color: currentModalPage == entry.key
                             ? Colors.white
-                            : Colors.white.withValues(alpha: 0.4),
+                            : Colors.white.withOpacity(0.4),
                         border: Border.all(
-                          color: Colors.black.withValues(alpha: 0.3),
+                          color: Colors.black.withOpacity(0.3),
                           width: 1,
                         ),
                       ),
@@ -686,7 +687,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                   duration: const Duration(milliseconds: 120),
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.7),
+                    color: Colors.black.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -731,7 +732,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
   void _showFiltersDialog(BuildContext context) {
     showDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.5),
+      barrierColor: Colors.black.withOpacity(0.5),
       builder: (context) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return StatefulBuilder(

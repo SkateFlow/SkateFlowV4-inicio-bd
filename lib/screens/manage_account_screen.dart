@@ -11,7 +11,15 @@ class ManageAccountScreen extends StatelessWidget {
           'Gerenciar Conta',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        backgroundColor: const Color(0xFF1F1F1F),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF3888D2), Color(0xFF043C70)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -35,7 +43,7 @@ class ManageAccountScreen extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundColor: Colors.white.withValues(alpha: 0.2),
+                    backgroundColor: Colors.white.withOpacity(0.2),
                     child: const Icon(
                       Icons.person,
                       size: 40,
@@ -56,7 +64,7 @@ class ManageAccountScreen extends StatelessWidget {
                     'carlos.silva@email.com',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white.withValues(alpha: 0.8),
+                      color: Colors.white.withOpacity(0.8),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -64,7 +72,7 @@ class ManageAccountScreen extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: const Text(
@@ -166,9 +174,9 @@ class ManageAccountScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.1),
+                color: Colors.red.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                border: Border.all(color: Colors.red.withOpacity(0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,7 +236,7 @@ class ManageAccountScreen extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(0xFF00294F).withValues(alpha: 0.1),
+            color: const Color(0xFF00294F).withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: const Color(0xFF00294F), size: 24),
@@ -380,7 +388,15 @@ class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
           'Alterar Email',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        backgroundColor: const Color(0xFF1F1F1F),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF3888D2), Color(0xFF043C70)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -393,11 +409,11 @@ class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF00294F).withValues(alpha: 0.1),
+                  color: const Color(0xFF00294F).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                       color: const Color.fromARGB(255, 7, 48, 87)
-                          .withValues(alpha: 0.3)),
+                          .withOpacity(0.3)),
                 ),
                 child: Row(
                   children: [
@@ -530,7 +546,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           'Alterar Senha',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        backgroundColor: const Color(0xFF1F1F1F),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF3888D2), Color(0xFF043C70)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -543,11 +567,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF00294F).withValues(alpha: 0.1),
+                  color: const Color(0xFF00294F).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                       color: const Color.fromARGB(255, 7, 48, 87)
-                          .withValues(alpha: 0.3)),
+                          .withOpacity(0.3)),
                 ),
                 child: Row(
                   children: [

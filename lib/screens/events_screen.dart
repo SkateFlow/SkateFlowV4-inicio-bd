@@ -117,7 +117,15 @@ class _EventsScreenState extends State<EventsScreen> {
           'Eventos',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        backgroundColor: const Color(0xFF2C2C2C),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF3888D2), Color(0xFF043C70)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
         actions: [
           Container(
@@ -131,7 +139,7 @@ class _EventsScreenState extends State<EventsScreen> {
                 hintStyle: const TextStyle(color: Colors.white70),
                 prefixIcon: const Icon(Icons.search, color: Colors.white70),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.1),
+                fillColor: Colors.white.withOpacity(0.1),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide.none,
@@ -205,7 +213,7 @@ class _EventsScreenState extends State<EventsScreen> {
                               end: Alignment.bottomCenter,
                               colors: [
                                 Colors.transparent,
-                                Colors.black.withValues(alpha: 0.7),
+                                Colors.black.withOpacity(0.7),
                               ],
                             ),
                           ),
@@ -229,7 +237,7 @@ class _EventsScreenState extends State<EventsScreen> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.2),
+                                      color: Colors.white.withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -459,7 +467,7 @@ class _EventsScreenState extends State<EventsScreen> {
   void _showFiltersDialog(BuildContext context) {
     showDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.5),
+      barrierColor: Colors.black.withOpacity(0.5),
       builder: (context) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return StatefulBuilder(

@@ -23,7 +23,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
           'Configurações',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        backgroundColor: const Color(0xFF2C2C2C),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF3888D2), Color(0xFF043C70)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -148,7 +156,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         trailing: Switch(
           value: themeProvider.isDarkMode,
-          activeThumbColor: isDark ? Colors.white : Colors.black,
           onChanged: (value) {
             setState(() {
               themeProvider.toggleTheme();
@@ -343,10 +350,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF00294F).withValues(alpha: 0.1),
+                color: const Color(0xFF00294F).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                    color: const Color(0xFF00294F).withValues(alpha: 0.3)),
+                    color: const Color(0xFF00294F).withOpacity(0.3)),
               ),
               child: Row(
                 children: [
@@ -468,7 +475,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF00294F).withValues(alpha: 0.1),
+                color: const Color(0xFF00294F).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -586,10 +593,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF00294F).withValues(alpha: 0.1),
+                color: const Color(0xFF00294F).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                    color: const Color(0xFF00294F).withValues(alpha: 0.3)),
+                    color: const Color(0xFF00294F).withOpacity(0.3)),
               ),
               child: Row(
                 children: [
@@ -657,7 +664,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           leading: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFF00294F).withValues(alpha: 0.1),
+              color: const Color(0xFF00294F).withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon,

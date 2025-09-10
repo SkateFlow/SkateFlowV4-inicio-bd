@@ -21,7 +21,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           'Editar Perfil',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        backgroundColor: const Color(0xFF2C2C2C),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF3888D2), Color(0xFF043C70)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
         actions: [
           TextButton(
@@ -114,7 +122,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       : Colors.grey.shade600),
                 filled: true,
                 fillColor: Theme.of(context).brightness == Brightness.dark 
-                    ? Colors.white.withValues(alpha: 0.1) 
+                    ? Colors.white.withOpacity(0.1) 
                     : Colors.grey.shade50,
               ),
               style: TextStyle(
@@ -156,7 +164,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       : Colors.grey.shade600),
                 filled: true,
                 fillColor: Theme.of(context).brightness == Brightness.dark 
-                    ? Colors.white.withValues(alpha: 0.1) 
+                    ? Colors.white.withOpacity(0.1) 
                     : Colors.grey.shade50,
               ),
               style: TextStyle(
@@ -194,7 +202,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       : Colors.grey.shade600),
                 filled: true,
                 fillColor: Theme.of(context).brightness == Brightness.dark 
-                    ? Colors.white.withValues(alpha: 0.1) 
+                    ? Colors.white.withOpacity(0.1) 
                     : Colors.grey.shade50,
                 alignLabelWithHint: true,
               ),

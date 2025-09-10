@@ -44,7 +44,15 @@ class HelpScreen extends StatelessWidget {
           'Ajuda',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        backgroundColor: const Color(0xFF1F1F1F),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF3888D2), Color(0xFF043C70)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
       ),
       body: CustomScrollView(
@@ -69,7 +77,7 @@ class HelpScreen extends StatelessWidget {
                   Icon(
                     Icons.support_agent,
                     size: 60,
-                    color: const Color(0xFF00294F),
+                    color: Colors.white,
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -130,7 +138,7 @@ class HelpScreen extends StatelessWidget {
                         Text(
                           'Segunda a Sexta, 9h às 18h',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.8),
+                            color: Colors.white.withOpacity(0.8),
                             fontSize: 12,
                           ),
                         ),
@@ -157,12 +165,12 @@ class HelpScreen extends StatelessWidget {
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF00294F).withValues(alpha: 0.1),
+                          color: const Color(0xFF043C70),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
                           item['icon'] as IconData,
-                          color: const Color(0xFF00294F),
+                          color: Colors.white,
                           size: 24,
                         ),
                       ),
@@ -264,7 +272,7 @@ class HelpScreen extends StatelessWidget {
               Icon(
                 item['icon'] as IconData,
                 size: 40,
-                color: const Color(0xFF00294F),
+                color: Colors.white,
               ),
               const SizedBox(height: 8),
               Text(

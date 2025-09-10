@@ -45,7 +45,15 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
           'Notificações',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        backgroundColor: const Color(0xFF1F1F1F),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF3888D2), Color(0xFF043C70)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
       ),
       body: ListView(
@@ -54,9 +62,9 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF00294F).withValues(alpha: 0.1),
+              color: const Color(0xFF00294F).withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFF00294F).withValues(alpha: 0.3)),
+              border: Border.all(color: const Color(0xFF00294F).withOpacity(0.3)),
             ),
             child: Row(
               children: [
@@ -210,7 +218,7 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
         secondary: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: value ? const Color(0xFF00294F).withValues(alpha: 0.1) : Colors.grey.withValues(alpha: 0.1),
+            color: value ? const Color(0xFF00294F).withOpacity(0.1) : Colors.grey.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -237,8 +245,7 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
           ),
         ),
         value: value,
-        onChanged: onChanged,
-        activeThumbColor: const Color(0xFF00294F),
+        onChanged: onChanged
       ),
     );
   }

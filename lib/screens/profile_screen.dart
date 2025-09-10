@@ -3,7 +3,6 @@ import 'edit_profile_screen.dart';
 import 'favorite_parks_screen.dart';
 import 'help_screen.dart';
 
-
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -13,11 +12,10 @@ class ProfileScreen extends StatelessWidget {
       'name': 'Carlos Silva',
       'username': '@carlosskate',
       'bio': 'Skatista há 5 anos. Especialista em manobras de street.',
-      'followers': 230,
-      'following': 184,
-      'posts': 47,
       'level': 'Intermediário',
       'favoriteSpot': 'Skatepark Central',
+      'sessionsCount': 47,
+      'totalTime': '120h',
     };
 
     return Scaffold(
@@ -33,7 +31,15 @@ class ProfileScreen extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            backgroundColor: const Color(0xFF1F1F1F),
+            flexibleSpace: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF3888D2), Color(0xFF043C70)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+            ),
           ),
           SliverToBoxAdapter(
             child: Column(
@@ -117,9 +123,9 @@ class ProfileScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildStatColumn('Posts', user['posts'].toString()),
-                      _buildStatColumn('Seguidores', user['followers'].toString()),
-                      _buildStatColumn('Seguindo', user['following'].toString()),
+                      _buildStatColumn('Sessões', user['sessionsCount'].toString()),
+                      _buildStatColumn('Tempo Total', user['totalTime'].toString()),
+                      _buildStatColumn('Nível', user['level'].toString()),
                     ],
                   ),
                 ),
@@ -247,15 +253,14 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildStatColumn(String label, String value) {
     return Builder(
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Column(
           children: [
             Text(
               value,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: isDark ? Colors.black : Colors.black,
+                color: Colors.black,
               ),
             ),
             const SizedBox(height: 4),
@@ -288,7 +293,7 @@ class ProfileScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 20),
@@ -379,7 +384,7 @@ class ProfileScreen extends StatelessWidget {
     
     showDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.5),
+      barrierColor: Colors.black.withOpacity(0.5),
       builder: (context) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return Dialog(
@@ -422,7 +427,7 @@ class ProfileScreen extends StatelessWidget {
                     backgroundColor: isDark ? Colors.white : Colors.black,
                     foregroundColor: isDark ? Colors.black : Colors.white,
                   ),
-                  child: Text('Entendi'),
+                  child: const Text('Entendi'),
                 ),
               ],
             ),
@@ -466,7 +471,7 @@ class ProfileScreen extends StatelessWidget {
                   color: isDark ? Colors.white : Colors.black,
                 ),
               ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
               ListTile(
                 leading: Container(
                   padding: const EdgeInsets.all(8),
@@ -480,34 +485,34 @@ class ProfileScreen extends StatelessWidget {
                   'Copiar link',
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
                 ),
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Link copiado para a área de transferência')),
-                );
-              },
-            ),
-            ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF25D366).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF25D366),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.chat,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Link copiado para a área de transferência')),
+                  );
+                },
               ),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF25D366).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF25D366),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.chat,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                  ),
+                ),
                 title: Text(
                   'WhatsApp',
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
@@ -516,38 +521,38 @@ class ProfileScreen extends StatelessWidget {
                   'Compartilhar no WhatsApp',
                   style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
                 ),
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Compartilhado no WhatsApp')),
-                );
-              },
-            ),
-            ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE4405F).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFE4405F), Color(0xFF833AB4), Color(0xFFF77737)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: const Icon(
-                    Icons.camera_alt,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Compartilhado no WhatsApp')),
+                  );
+                },
               ),
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE4405F).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFE4405F), Color(0xFF833AB4), Color(0xFFF77737)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                  ),
+                ),
                 title: Text(
                   'Instagram',
                   style: TextStyle(color: isDark ? Colors.white : Colors.black),
@@ -556,13 +561,13 @@ class ProfileScreen extends StatelessWidget {
                   'Compartilhar no Instagram',
                   style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
                 ),
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Compartilhado no Instagram')),
-                );
-              },
-            ),
+                onTap: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Compartilhado no Instagram')),
+                  );
+                },
+              ),
               const SizedBox(height: 20),
             ],
           ),
