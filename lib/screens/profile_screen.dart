@@ -293,7 +293,7 @@ class ProfileScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 20),
@@ -384,7 +384,7 @@ class ProfileScreen extends StatelessWidget {
     
     showDialog(
       context: context,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       builder: (context) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return Dialog(
@@ -496,7 +496,7 @@ class ProfileScreen extends StatelessWidget {
                 leading: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF25D366).withOpacity(0.1),
+                    color: const Color(0xFF25D366).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Container(
@@ -532,7 +532,7 @@ class ProfileScreen extends StatelessWidget {
                 leading: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE4405F).withOpacity(0.1),
+                    color: const Color(0xFFE4405F).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Container(

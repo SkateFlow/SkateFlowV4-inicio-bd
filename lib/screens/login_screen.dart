@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       'Conecte-se com a comunidade skate',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                     const SizedBox(height: 48),
@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 10,
                             offset: const Offset(0, 5),
                           ),
@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     _emailError ? Colors.red : Colors.white70,
                               ),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.1),
+                              fillColor: Colors.white.withValues(alpha: 0.1),
                               errorText: _emailError &&
                                       _emailController.text.isNotEmpty
                                   ? 'Email inválido'
@@ -185,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     : Colors.white70,
                               ),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.1),
+                              fillColor: Colors.white.withValues(alpha: 0.1),
                             ),
                             obscureText: _obscurePassword,
                             onChanged: (value) {
@@ -236,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Text(
                         'Não tem conta? Cadastre-se',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 16,
                         ),
                       ),

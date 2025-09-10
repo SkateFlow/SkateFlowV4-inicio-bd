@@ -76,7 +76,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       'Junte-se à comunidade skate',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                     const SizedBox(height: 48),
@@ -87,7 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 10,
                             offset: const Offset(0, 5),
                           ),
@@ -127,7 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: _nameError ? Colors.red : Colors.white70,
                               ),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.1),
+                              fillColor: Colors.white.withValues(alpha: 0.1),
                             ),
                             textCapitalization: TextCapitalization.words,
                             onChanged: (value) {
@@ -173,7 +173,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     _emailError ? Colors.red : Colors.white70,
                               ),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.1),
+                              fillColor: Colors.white.withValues(alpha: 0.1),
                               errorText: _emailError &&
                                       _emailController.text.isNotEmpty
                                   ? 'Email inválido'
@@ -239,7 +239,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     : Colors.white70,
                               ),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.1),
+                              fillColor: Colors.white.withValues(alpha: 0.1),
                             ),
                             obscureText: _obscurePassword,
                             onChanged: (value) {
@@ -303,7 +303,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     : Colors.white70,
                               ),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.1),
+                              fillColor: Colors.white.withValues(alpha: 0.1),
                               errorText: _confirmPasswordError &&
                                       _confirmPasswordController.text.isNotEmpty
                                   ? 'As senhas não coincidem'
@@ -349,7 +349,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: Text(
                         'Já tem conta? Faça login',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 16,
                         ),
                       ),

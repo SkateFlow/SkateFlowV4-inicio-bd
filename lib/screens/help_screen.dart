@@ -138,7 +138,7 @@ class HelpScreen extends StatelessWidget {
                         Text(
                           'Segunda a Sexta, 9h às 18h',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withValues(alpha: 0.8),
                             fontSize: 12,
                           ),
                         ),

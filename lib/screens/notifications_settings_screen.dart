@@ -62,9 +62,9 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF00294F).withOpacity(0.1),
+              color: const Color(0xFF00294F).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFF00294F).withOpacity(0.3)),
+              border: Border.all(color: const Color(0xFF00294F).withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
@@ -218,7 +218,7 @@ class _NotificationsSettingsScreenState extends State<NotificationsSettingsScree
         secondary: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: value ? const Color(0xFF00294F).withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+            color: value ? const Color(0xFF00294F).withValues(alpha: 0.1) : Colors.grey.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(

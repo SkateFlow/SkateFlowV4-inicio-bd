@@ -350,10 +350,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF00294F).withOpacity(0.1),
+                color: const Color(0xFF00294F).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                    color: const Color(0xFF00294F).withOpacity(0.3)),
+                    color: const Color(0xFF00294F).withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -475,7 +475,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF00294F).withOpacity(0.1),
+                color: const Color(0xFF00294F).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -593,10 +593,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF00294F).withOpacity(0.1),
+                color: const Color(0xFF00294F).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                    color: const Color(0xFF00294F).withOpacity(0.3)),
+                    color: const Color(0xFF00294F).withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -664,7 +664,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           leading: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFF00294F).withOpacity(0.1),
+              color: const Color(0xFF00294F).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon,

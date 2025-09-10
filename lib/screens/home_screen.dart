@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../main.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Position? _currentPosition;
-  final Set<Marker> _markers = {};
+  final List<Marker> _markers = [];
 
   @override
   void initState() {
@@ -47,11 +49,11 @@ class _HomeScreenState extends State<HomeScreen> {
       for (final park in parks) {
         _markers.add(
           Marker(
-            markerId: MarkerId(park['name'] as String),
-            position: LatLng(park['lat'] as double, park['lng'] as double),
-            infoWindow: InfoWindow(
-              title: park['name'] as String,
-              snippet: 'Toque para mais detalhes',
+            point: LatLng(park['lat'] as double, park['lng'] as double),
+            child: const Icon(
+              Icons.location_on,
+              color: Colors.red,
+              size: 30,
             ),
           ),
         );
@@ -195,8 +197,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     'Encontre as melhores pistas e eventos',
                     style: TextStyle(
                       color: Theme.of(context).brightness == Brightness.dark 
-                          ? Colors.white.withOpacity(0.8) 
-                          : Colors.black.withOpacity(0.7),
+                          ? Colors.white.withValues(alpha: 0.8) 
+                          : Colors.black.withValues(alpha: 0.7),
                       fontSize: 16,
                     ),
                   ),
@@ -500,23 +502,46 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: CircularProgressIndicator(color: Colors.white),
                           ),
                         )
-                      : GoogleMap(
-                          initialCameraPosition: CameraPosition(
-                            target: LatLng(_currentPosition!.latitude,
+                      : FlutterMap(
+                          options: MapOptions(
+                            initialCenter: LatLng(_currentPosition!.latitude,
                                 _currentPosition!.longitude),
-                            zoom: 12,
+                            initialZoom: 12,
+                            onTap: (_, __) {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => const MainScreen(initialIndex: 2),
+                                ),
+                              );
+                            },
                           ),
-                          markers: _markers,
-                          myLocationEnabled: true,
-                          zoomControlsEnabled: false,
-                          mapToolbarEnabled: false,
-                          onTap: (_) {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) => const MainScreen(initialIndex: 2),
-                              ),
-                            );
-                          },
+                          children: [
+                            TileLayer(
+                              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              userAgentPackageName: 'com.example.skateflow',
+                            ),
+                            MarkerLayer(
+                              markers: [
+                                ..._markers,
+                                if (_currentPosition != null)
+                                  Marker(
+                                    point: LatLng(
+                                      _currentPosition!.latitude,
+                                      _currentPosition!.longitude,
+                                    ),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: Colors.white, width: 2),
+                                      ),
+                                      width: 16,
+                                      height: 16,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ],
                         ),
                 ),
               ),
@@ -846,7 +871,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () => _openWaze(-23.5505, -46.6333),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,
                               foregroundColor: Colors.white,
@@ -946,9 +971,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         shape: BoxShape.circle,
                         color: currentModalPage == entry.key
                             ? Colors.white
-                            : Colors.white.withOpacity(0.4),
+                            : Colors.white.withValues(alpha: 0.4),
                         border: Border.all(
-                          color: Colors.black.withOpacity(0.3),
+                          color: Colors.black.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -964,7 +989,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
+                    color: Colors.black.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -1011,7 +1036,7 @@ class _HomeScreenState extends State<HomeScreen> {
     
     showDialog(
       context: context,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
@@ -1060,5 +1085,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void _openWaze(double lat, double lng) async {
+    final wazeUrl = 'https://waze.com/ul?ll=$lat,$lng&navigate=yes';
+    if (await canLaunchUrl(Uri.parse(wazeUrl))) {
+      await launchUrl(Uri.parse(wazeUrl), mode: LaunchMode.externalApplication);
+    }
   }
 }

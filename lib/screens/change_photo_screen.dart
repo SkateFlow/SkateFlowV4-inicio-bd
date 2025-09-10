@@ -99,17 +99,17 @@ class ChangePhotoScreen extends StatelessWidget {
       builder: (context) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300.withOpacity(0.3)),
+            border: Border.all(color: Colors.grey.shade300.withValues(alpha: 0.3)),
           ),
           child: ListTile(
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isDestructive 
-                    ? Colors.red.withOpacity(0.1)
-                    : const Color(0xFF00294F).withOpacity(0.1),
+                    ? Colors.red.withValues(alpha: 0.1)
+                    : const Color(0xFF00294F).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -132,7 +132,7 @@ class ChangePhotoScreen extends StatelessWidget {
               subtitle,
               style: TextStyle(
                 color: isDestructive 
-                    ? Colors.red.withOpacity(0.7) 
+                    ? Colors.red.withValues(alpha: 0.7) 
                     : (Theme.of(context).brightness == Brightness.dark 
                         ? Colors.white70 
                         : Colors.black54),

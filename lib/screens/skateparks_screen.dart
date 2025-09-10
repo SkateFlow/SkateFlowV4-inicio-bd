@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'dart:math';
 
 
 class SkateparksScreen extends StatefulWidget {
@@ -20,11 +22,50 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
   String _selectedType = 'Todos';
   String _selectedHours = 'Todos';
   List<Map<String, dynamic>> _filteredSkateparks = [];
+  Position? _currentPosition;
 
   @override
   void initState() {
     super.initState();
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission != LocationPermission.denied) {
+        _currentPosition = await Geolocator.getCurrentPosition();
+      }
+    } catch (e) {
+      // Fallback para São Paulo se não conseguir localização
+      _currentPosition = Position(
+        latitude: -23.5505,
+        longitude: -46.6333,
+        timestamp: DateTime.now(),
+        accuracy: 0,
+        altitude: 0,
+        heading: 0,
+        speed: 0,
+        speedAccuracy: 0,
+        altitudeAccuracy: 0,
+        headingAccuracy: 0,
+      );
+    }
     _applyFilters();
+  }
+
+  String _calculateDistance(double lat, double lng) {
+    if (_currentPosition == null) return '-- km';
+    double distance = Geolocator.distanceBetween(
+      _currentPosition!.latitude,
+      _currentPosition!.longitude,
+      lat,
+      lng,
+    ) / 1000; // Convert to km
+    return '${distance.toStringAsFixed(1)} km';
   }
 
   @override
@@ -43,18 +84,20 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
       {
         'name': 'Skate City',
         'type': 'Street',
-        'distance': '1.2 km',
+        'lat': -23.5505,
+        'lng': -46.6333,
         'rating': 4.5,
-        'address': 'Centro da cidade',
+        'address': 'Rua Jaraguá, 627 - Bom Retiro, SP',
         'hours': '8h às 22h',
         'features': ['Bowl', 'Street', 'Half-pipe', 'Corrimão'],
         'description': 'Pista completa no centro da cidade com estruturas variadas para todos os níveis.',
         'images': ['assets/images/skateparks/SkateCity.png', 'assets/images/skateparks/SkateCity2.png'],
       },
       {
-        'name': 'Rajas Skatepark',
+        'name': 'AAAAAA FECHADA',
         'type': 'Bowl',
-        'distance': '2.5 km',
+        'lat': -23.5729,
+        'lng': -46.6412,
         'rating': 4.8,
         'address': 'Zona Sul',
         'hours': '6h às 20h',
@@ -65,9 +108,10 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
       {
         'name': 'Quadespra',
         'type': 'Plaza',
-        'distance': '3.1 km',
+        'lat': -23.5200,
+        'lng': -46.6094,
         'rating': 4.2,
-        'address': 'Zona Norte',
+        'address': 'Rua Lacônia, 266 - Vila Alexandria, São Paulo',
         'hours': '7h às 18h',
         'features': ['Plaza', 'Street', 'Escadas'],
         'description': 'Plaza urbana com obstáculos técnicos para street skating avançado.',
@@ -78,8 +122,13 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
     setState(() {
       _filteredSkateparks = skateparks.where((park) {
         // Filtro por distância
-        if (_selectedDistance != 'Todas') {
-          double distance = double.parse((park['distance'] as String).replaceAll(' km', ''));
+        if (_selectedDistance != 'Todas' && _currentPosition != null) {
+          double distance = Geolocator.distanceBetween(
+            _currentPosition!.latitude,
+            _currentPosition!.longitude,
+            park['lat'] as double,
+            park['lng'] as double,
+          ) / 1000;
           switch (_selectedDistance) {
             case 'Até 1 km':
               if (distance > 1.0) return false;
@@ -149,7 +198,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 hintStyle: const TextStyle(color: Colors.white70),
                 prefixIcon: const Icon(Icons.search, color: Colors.white70),
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.1),
+                fillColor: Colors.white.withValues(alpha: 0.1),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide.none,
@@ -200,7 +249,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                               end: Alignment.bottomCenter,
                               colors: [
                                 Colors.transparent,
-                                Colors.black.withOpacity(0.7),
+                                Colors.black.withValues(alpha: 0.7),
                               ],
                             ),
                           ),
@@ -224,7 +273,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.2),
+                                      color: Colors.white.withValues(alpha: 0.2),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -244,7 +293,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                                   const Icon(Icons.location_on, size: 16, color: Colors.white70),
                                   const SizedBox(width: 4),
                                   Text(
-                                    park['distance'] as String,
+                                    _calculateDistance(park['lat'] as double, park['lng'] as double),
                                     style: const TextStyle(color: Colors.white70),
                                   ),
                                   const SizedBox(width: 16),
@@ -358,7 +407,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 const SizedBox(height: 8),
                 _buildInfoRow(Icons.access_time, 'Aberto das ${park['hours']}'),
                 const SizedBox(height: 8),
-                _buildInfoRow(Icons.directions, park['distance'] as String),
+                _buildInfoRow(Icons.directions, _calculateDistance(park['lat'] as double, park['lng'] as double)),
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -531,7 +580,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                     shape: BoxShape.circle,
                     color: _currentPages[carouselIndex] == entry.key
                         ? Colors.white
-                        : Colors.white.withOpacity(0.4),
+                        : Colors.white.withValues(alpha: 0.4),
                   ),
                 );
               }).toList(),
@@ -557,7 +606,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -587,7 +636,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -668,9 +717,9 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                         shape: BoxShape.circle,
                         color: currentModalPage == entry.key
                             ? Colors.white
-                            : Colors.white.withOpacity(0.4),
+                            : Colors.white.withValues(alpha: 0.4),
                         border: Border.all(
-                          color: Colors.black.withOpacity(0.3),
+                          color: Colors.black.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -687,7 +736,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                   duration: const Duration(milliseconds: 120),
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
+                    color: Colors.black.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -732,7 +781,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
   void _showFiltersDialog(BuildContext context) {
     showDialog(
       context: context,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       builder: (context) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return StatefulBuilder(

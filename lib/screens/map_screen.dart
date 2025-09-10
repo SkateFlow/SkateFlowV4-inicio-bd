@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class MapScreen extends StatefulWidget {
@@ -11,9 +13,9 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  GoogleMapController? _mapController;
+  final MapController _mapController = MapController();
   Position? _currentPosition;
-  final Set<Marker> _markers = {};
+  final List<Marker> _markers = [];
   
   @override
   void initState() {
@@ -39,11 +41,9 @@ class _MapScreenState extends State<MapScreen> {
     });
     
     // Mover câmera para a localização atual
-    _mapController?.animateCamera(
-      CameraUpdate.newLatLngZoom(
-        LatLng(position.latitude, position.longitude),
-        14,
-      ),
+    _mapController.move(
+      LatLng(position.latitude, position.longitude),
+      16,
     );
   }
   
@@ -53,7 +53,7 @@ class _MapScreenState extends State<MapScreen> {
         'id': '1',
         'name': 'Skate City',
         'type': 'Street',
-        'address': 'Centro da cidade',
+        'address': 'Rua Jaraguá, 627 - Bom Retiro, SP',
         'hours': '8h às 22h',
         'rating': 4.5,
         'features': ['Bowl', 'Street', 'Half-pipe', 'Corrimão'],
@@ -64,7 +64,7 @@ class _MapScreenState extends State<MapScreen> {
         'id': '2',
         'name': 'Rajas Skatepark',
         'type': 'Bowl',
-        'address': 'Zona Sul',
+        'address': 'Av. Cruzeiro do Sul, 1100 - Canindé, SP',
         'hours': '6h às 20h',
         'rating': 4.8,
         'features': ['Bowl', 'Mini Ramp'],
@@ -75,7 +75,7 @@ class _MapScreenState extends State<MapScreen> {
         'id': '3',
         'name': 'Quadespra',
         'type': 'Plaza',
-        'address': 'Zona Norte',
+        'address': 'Rua Lacônia, 266 - Vila Alexandria, São Paulo',
         'hours': '7h às 18h',
         'rating': 4.2,
         'features': ['Plaza', 'Street', 'Escadas'],
@@ -89,16 +89,18 @@ class _MapScreenState extends State<MapScreen> {
       for (final park in skateparks) {
         _markers.add(
           Marker(
-            markerId: MarkerId(park['id'] as String),
-            position: LatLng(
+            point: LatLng(
               park['lat'] as double,
               park['lng'] as double,
             ),
-            infoWindow: InfoWindow(
-              title: park['name'] as String,
-              snippet: '${park['type']} • ${park['rating']} ⭐',
+            child: GestureDetector(
+              onTap: () => _showParkDetails(park),
+              child: const Icon(
+                Icons.location_on,
+                color: Colors.red,
+                size: 40,
+              ),
             ),
-            onTap: () => _showParkDetails(park),
           ),
         );
       }
@@ -217,7 +219,10 @@ class _MapScreenState extends State<MapScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _openWaze(park['lat'] as double, park['lng'] as double);
+                      },
                       child: const Text('Como Chegar'),
                     ),
                   ),
@@ -239,6 +244,8 @@ class _MapScreenState extends State<MapScreen> {
       'address': park['address'],
       'hours': park['hours'],
       'features': park['features'],
+      'lat': park['lat'],
+      'lng': park['lng'],
       'description': park['name'] == 'Skate City'
           ? 'Pista completa no centro da cidade com estruturas variadas para todos os níveis.'
           : park['name'] == 'Rajas Skatepark'
@@ -391,7 +398,7 @@ class _MapScreenState extends State<MapScreen> {
                       children: [
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () => _openWaze(parkData['lat'] as double, parkData['lng'] as double),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,
                               foregroundColor: Colors.white,
@@ -406,7 +413,7 @@ class _MapScreenState extends State<MapScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () => _openWaze(parkData['lat'] as double, parkData['lng'] as double),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
@@ -491,9 +498,9 @@ class _MapScreenState extends State<MapScreen> {
                         shape: BoxShape.circle,
                         color: currentModalPage == entry.key
                             ? Colors.white
-                            : Colors.white.withOpacity(0.4),
+                            : Colors.white.withValues(alpha: 0.4),
                         border: Border.all(
-                          color: Colors.black.withOpacity(0.3),
+                          color: Colors.black.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -508,7 +515,7 @@ class _MapScreenState extends State<MapScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
+                    color: Colors.black.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -583,24 +590,58 @@ class _MapScreenState extends State<MapScreen> {
                     : Colors.black,
               ),
             )
-          : GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(
+          : FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                initialCenter: LatLng(
                   _currentPosition!.latitude,
                   _currentPosition!.longitude,
                 ),
-                zoom: 14,
+                initialZoom: 14,
+                maxZoom: 19,
               ),
-              myLocationEnabled: true,
-              markers: _markers,
-              onMapCreated: (controller) {
-                _mapController = controller;
-              },
+              children: [
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.example.skateflow',
+                  maxZoom: 19,
+                ),
+                MarkerLayer(
+                  markers: [
+                    ..._markers,
+                    if (_currentPosition != null)
+                      Marker(
+                        point: LatLng(
+                          _currentPosition!.latitude,
+                          _currentPosition!.longitude,
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 3),
+                          ),
+                          width: 20,
+                          height: 20,
+                        ),
+                      ),
+                  ],
+                ),
+              ],
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _getCurrentLocation,
+        backgroundColor: const Color(0xFF3888D2),
+        foregroundColor: Colors.white,
         child: const Icon(Icons.my_location),
       ),
     );
+  }
+
+  void _openWaze(double lat, double lng) async {
+    final wazeUrl = 'https://waze.com/ul?ll=$lat,$lng&navigate=yes';
+    if (await canLaunchUrl(Uri.parse(wazeUrl))) {
+      await launchUrl(Uri.parse(wazeUrl), mode: LaunchMode.externalApplication);
+    }
   }
 }

@@ -122,7 +122,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       : Colors.grey.shade600),
                 filled: true,
                 fillColor: Theme.of(context).brightness == Brightness.dark 
-                    ? Colors.white.withOpacity(0.1) 
+                    ? Colors.white.withValues(alpha: 0.1) 
                     : Colors.grey.shade50,
               ),
               style: TextStyle(
@@ -164,7 +164,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       : Colors.grey.shade600),
                 filled: true,
                 fillColor: Theme.of(context).brightness == Brightness.dark 
-                    ? Colors.white.withOpacity(0.1) 
+                    ? Colors.white.withValues(alpha: 0.1) 
                     : Colors.grey.shade50,
               ),
               style: TextStyle(
@@ -202,7 +202,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       : Colors.grey.shade600),
                 filled: true,
                 fillColor: Theme.of(context).brightness == Brightness.dark 
-                    ? Colors.white.withOpacity(0.1) 
+                    ? Colors.white.withValues(alpha: 0.1) 
                     : Colors.grey.shade50,
                 alignLabelWithHint: true,
               ),
