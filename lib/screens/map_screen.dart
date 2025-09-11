@@ -3,7 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import '../services/skatepark_service.dart';
+import '../models/skatepark.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -16,16 +17,44 @@ class _MapScreenState extends State<MapScreen> {
   final MapController _mapController = MapController();
   Position? _currentPosition;
   final List<Marker> _markers = [];
+  final SkateparkService _skateparkService = SkateparkService();
   
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
     _loadSkateparks();
+    _skateparkService.addListener(_onSkateparksUpdated);
+  }
+
+  @override
+  void dispose() {
+    _skateparkService.removeListener(_onSkateparksUpdated);
+    super.dispose();
+  }
+
+  void _onSkateparksUpdated() {
+    _loadSkateparks();
+  }
+
+  String _calculateDistance(double lat, double lng) {
+    if (_currentPosition == null) return '-- km';
+    
+    // Calcula distância em linha reta (haversine)
+    double distance = Geolocator.distanceBetween(
+      _currentPosition!.latitude,
+      _currentPosition!.longitude,
+      lat,
+      lng,
+    ) / 1000;
+    
+    // Adiciona aproximadamente 15-20% para estimar distância real por ruas
+    double estimatedRoadDistance = distance * 1.18;
+    
+    return '${estimatedRoadDistance.toStringAsFixed(1)} km';
   }
   
   Future<void> _getCurrentLocation() async {
-    // Verificar permissão de localização
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -34,13 +63,11 @@ class _MapScreenState extends State<MapScreen> {
       }
     }
     
-    // Obter localização atual
     final position = await Geolocator.getCurrentPosition();
     setState(() {
       _currentPosition = position;
     });
     
-    // Mover câmera para a localização atual
     _mapController.move(
       LatLng(position.latitude, position.longitude),
       16,
@@ -48,41 +75,7 @@ class _MapScreenState extends State<MapScreen> {
   }
   
   void _loadSkateparks() {
-    final skateparks = [
-      {
-        'id': '1',
-        'name': 'Skate City',
-        'type': 'Street',
-        'address': 'Rua Jaraguá, 627 - Bom Retiro, SP',
-        'hours': '8h às 22h',
-        'rating': 4.5,
-        'features': ['Bowl', 'Street', 'Half-pipe', 'Corrimão'],
-        'lat': -23.5505,
-        'lng': -46.6333,
-      },
-      {
-        'id': '2',
-        'name': 'Rajas Skatepark',
-        'type': 'Bowl',
-        'address': 'Av. Cruzeiro do Sul, 1100 - Canindé, SP',
-        'hours': '6h às 20h',
-        'rating': 4.8,
-        'features': ['Bowl', 'Mini Ramp'],
-        'lat': -23.5729,
-        'lng': -46.6412,
-      },
-      {
-        'id': '3',
-        'name': 'Quadespra',
-        'type': 'Plaza',
-        'address': 'Rua Lacônia, 266 - Vila Alexandria, São Paulo',
-        'hours': '7h às 18h',
-        'rating': 4.2,
-        'features': ['Plaza', 'Street', 'Escadas'],
-        'lat': -23.5200,
-        'lng': -46.6094,
-      },
-    ];
+    final skateparks = _skateparkService.getAllSkateparks();
     
     setState(() {
       _markers.clear();
@@ -90,8 +83,8 @@ class _MapScreenState extends State<MapScreen> {
         _markers.add(
           Marker(
             point: LatLng(
-              park['lat'] as double,
-              park['lng'] as double,
+              park.lat,
+              park.lng,
             ),
             child: GestureDetector(
               onTap: () => _showParkDetails(park),
@@ -107,7 +100,7 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  void _showParkDetails(Map<String, dynamic> park) {
+  void _showParkDetails(Skatepark park) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -127,7 +120,7 @@ class _MapScreenState extends State<MapScreen> {
                 children: [
                   Expanded(
                     child: Text(
-                      park['name'] as String,
+                      park.name,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -142,7 +135,7 @@ class _MapScreenState extends State<MapScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      park['type'] as String,
+                      park.type,
                       style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ),
@@ -154,7 +147,7 @@ class _MapScreenState extends State<MapScreen> {
                   Icon(Icons.location_on, size: 16, color: isDark ? Colors.white70 : Colors.black54),
                   const SizedBox(width: 4),
                   Text(
-                    park['address'] as String,
+                    park.address,
                     style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
                   ),
                 ],
@@ -165,7 +158,7 @@ class _MapScreenState extends State<MapScreen> {
                   Icon(Icons.access_time, size: 16, color: isDark ? Colors.white70 : Colors.black54),
                   const SizedBox(width: 4),
                   Text(
-                    'Aberto das ${park['hours']}',
+                    'Aberto das ${park.hours}',
                     style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
                   ),
                 ],
@@ -176,7 +169,7 @@ class _MapScreenState extends State<MapScreen> {
                   const Icon(Icons.star, size: 16, color: Colors.amber),
                   const SizedBox(width: 4),
                   Text(
-                    '${park['rating']} estrelas',
+                    '${park.rating} estrelas',
                     style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
                   ),
                 ],
@@ -193,7 +186,7 @@ class _MapScreenState extends State<MapScreen> {
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
-                children: (park['features'] as List<String>)
+                children: park.features
                     .map((feature) => Chip(
                           label: Text(feature, style: const TextStyle(color: Colors.black)),
                           backgroundColor: Colors.grey.shade200,
@@ -221,7 +214,7 @@ class _MapScreenState extends State<MapScreen> {
                     child: OutlinedButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        _openWaze(park['lat'] as double, park['lng'] as double);
+                        _openWaze(park.lat, park.lng, park.address);
                       },
                       child: const Text('Como Chegar'),
                     ),
@@ -235,29 +228,7 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  void _showFullParkDetails(Map<String, dynamic> park) {
-    final parkData = {
-      'name': park['name'],
-      'type': park['type'],
-      'distance': '1.2 km',
-      'rating': park['rating'],
-      'address': park['address'],
-      'hours': park['hours'],
-      'features': park['features'],
-      'lat': park['lat'],
-      'lng': park['lng'],
-      'description': park['name'] == 'Skate City'
-          ? 'Pista completa no centro da cidade com estruturas variadas para todos os níveis.'
-          : park['name'] == 'Rajas Skatepark'
-              ? 'Bowl clássico perfeito para manobras aéreas e transições suaves.'
-              : 'Plaza urbana com obstáculos técnicos para street skating avançado.',
-      'images': park['name'] == 'Skate City'
-          ? ['assets/images/skateparks/SkateCity.png', 'assets/images/skateparks/SkateCity2.png']
-          : park['name'] == 'Rajas Skatepark'
-              ? ['assets/images/skateparks/Rajas1.png', 'assets/images/skateparks/Rajas2.png']
-              : ['assets/images/skateparks/image2.png', 'assets/images/skateparks/image9.png'],
-    };
-
+  void _showFullParkDetails(Skatepark park) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -293,7 +264,7 @@ class _MapScreenState extends State<MapScreen> {
                       child: SizedBox(
                         height: 200,
                         width: double.infinity,
-                        child: _buildModalImageCarousel(parkData['images'] as List<String>),
+                        child: _buildModalImageCarousel(park.images),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -302,7 +273,7 @@ class _MapScreenState extends State<MapScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            parkData['name'] as String,
+                            park.name,
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -319,7 +290,7 @@ class _MapScreenState extends State<MapScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            parkData['type'] as String,
+                            park.type,
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
@@ -330,7 +301,7 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      parkData['description'] as String,
+                      park.description,
                       style: TextStyle(
                         fontSize: 16,
                         color: Theme.of(context).brightness == Brightness.dark
@@ -339,18 +310,18 @@ class _MapScreenState extends State<MapScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _buildInfoRow(Icons.location_on, parkData['address'] as String),
+                    _buildInfoRow(Icons.location_on, park.address),
                     const SizedBox(height: 8),
-                    _buildInfoRow(Icons.access_time, 'Aberto das ${parkData['hours']}'),
+                    _buildInfoRow(Icons.access_time, 'Aberto das ${park.hours}'),
                     const SizedBox(height: 8),
-                    _buildInfoRow(Icons.directions, parkData['distance'] as String),
+                    _buildInfoRow(Icons.directions, _calculateDistance(park.lat, park.lng)),
                     const SizedBox(height: 8),
                     Row(
                       children: [
                         const Icon(Icons.star, color: Colors.amber, size: 20),
                         const SizedBox(width: 8),
                         Text(
-                          '${parkData['rating']} estrelas',
+                          '${park.rating} estrelas',
                           style: TextStyle(
                             fontSize: 16,
                             color: Theme.of(context).brightness == Brightness.dark
@@ -375,7 +346,7 @@ class _MapScreenState extends State<MapScreen> {
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: (parkData['features'] as List<String>)
+                      children: park.features
                           .map(
                             (feature) => Chip(
                               label: Text(
@@ -398,7 +369,7 @@ class _MapScreenState extends State<MapScreen> {
                       children: [
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () => _openWaze(parkData['lat'] as double, parkData['lng'] as double),
+                            onPressed: () => _openWaze(park.lat, park.lng, park.address),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,
                               foregroundColor: Colors.white,
@@ -413,7 +384,7 @@ class _MapScreenState extends State<MapScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () => _openWaze(parkData['lat'] as double, parkData['lng'] as double),
+                            onPressed: () {},
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
@@ -561,9 +532,9 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Mapa',
-          style: const TextStyle(fontWeight: FontWeight.w900),
+          style: TextStyle(fontWeight: FontWeight.w900),
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -638,10 +609,31 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  void _openWaze(double lat, double lng) async {
-    final wazeUrl = 'https://waze.com/ul?ll=$lat,$lng&navigate=yes';
-    if (await canLaunchUrl(Uri.parse(wazeUrl))) {
-      await launchUrl(Uri.parse(wazeUrl), mode: LaunchMode.externalApplication);
+  void _openWaze(double lat, double lng, [String? address]) async {
+    String wazeUrl;
+    String fallbackUrl;
+    
+    if (address != null && address.isNotEmpty) {
+      // Usa o endereço para navegação mais precisa
+      final encodedAddress = Uri.encodeComponent(address);
+      wazeUrl = 'waze://?q=$encodedAddress&navigate=yes';
+      fallbackUrl = 'https://waze.com/ul?q=$encodedAddress&navigate=yes';
+    } else {
+      // Fallback para coordenadas
+      wazeUrl = 'waze://?ll=$lat,$lng&navigate=yes';
+      fallbackUrl = 'https://waze.com/ul?ll=$lat,$lng&navigate=yes';
+    }
+    
+    try {
+      if (await canLaunchUrl(Uri.parse(wazeUrl))) {
+        await launchUrl(Uri.parse(wazeUrl), mode: LaunchMode.externalApplication);
+      } else {
+        await launchUrl(Uri.parse(fallbackUrl), mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      // Se falhar, tenta com coordenadas como último recurso
+      final coordUrl = 'https://waze.com/ul?ll=$lat,$lng&navigate=yes';
+      await launchUrl(Uri.parse(coordUrl), mode: LaunchMode.externalApplication);
     }
   }
 }

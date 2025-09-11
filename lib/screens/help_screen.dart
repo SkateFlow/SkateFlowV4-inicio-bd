@@ -165,12 +165,12 @@ class HelpScreen extends StatelessWidget {
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF043C70),
+                          color: const Color(0xFF043C70).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
                           item['icon'] as IconData,
-                          color: Colors.white,
+                          color: const Color(0xFF043C70),
                           size: 24,
                         ),
                       ),
@@ -268,13 +268,13 @@ class HelpScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 7),
               Icon(
                 item['icon'] as IconData,
-                size: 40,
-                color: Colors.white,
+                size: 32,
+                color: const Color(0xFF043C70),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 3),
               Text(
                 item['title'] as String,
                 style: const TextStyle(
@@ -282,7 +282,7 @@ class HelpScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 7),
               Expanded(
                 child: SingleChildScrollView(
                   controller: scrollController,

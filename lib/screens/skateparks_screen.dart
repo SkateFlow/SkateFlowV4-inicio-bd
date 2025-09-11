@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'dart:math';
-
+import 'package:url_launcher/url_launcher.dart';
+import '../services/skatepark_service.dart';
+import '../models/skatepark.dart';
 
 class SkateparksScreen extends StatefulWidget {
   const SkateparksScreen({super.key});
@@ -16,18 +17,35 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
   final Map<int, int> _currentPages = {};
   final Map<int, Timer> _timers = {};
   
-  // Filtros
   String _selectedDistance = 'Todas';
   double _selectedRating = 0.0;
   String _selectedType = 'Todos';
   String _selectedHours = 'Todos';
-  List<Map<String, dynamic>> _filteredSkateparks = [];
+  List<Skatepark> _filteredSkateparks = [];
   Position? _currentPosition;
+  final SkateparkService _skateparkService = SkateparkService();
 
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
+    _skateparkService.addListener(_onSkateparksUpdated);
+  }
+
+  void _onSkateparksUpdated() {
+    _applyFilters();
+  }
+
+  @override
+  void dispose() {
+    _skateparkService.removeListener(_onSkateparksUpdated);
+    for (final controller in _pageControllers.values) {
+      controller.dispose();
+    }
+    for (final timer in _timers.values) {
+      timer.cancel();
+    }
+    super.dispose();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -40,7 +58,6 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
         _currentPosition = await Geolocator.getCurrentPosition();
       }
     } catch (e) {
-      // Fallback para São Paulo se não conseguir localização
       _currentPosition = Position(
         latitude: -23.5505,
         longitude: -46.6333,
@@ -64,70 +81,21 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
       _currentPosition!.longitude,
       lat,
       lng,
-    ) / 1000; // Convert to km
+    ) / 1000;
     return '${distance.toStringAsFixed(1)} km';
   }
 
-  @override
-  void dispose() {
-    for (final controller in _pageControllers.values) {
-      controller.dispose();
-    }
-    for (final timer in _timers.values) {
-      timer.cancel();
-    }
-    super.dispose();
-  }
-
   void _applyFilters() {
-    final skateparks = [
-      {
-        'name': 'Skate City',
-        'type': 'Street',
-        'lat': -23.5505,
-        'lng': -46.6333,
-        'rating': 4.5,
-        'address': 'Rua Jaraguá, 627 - Bom Retiro, SP',
-        'hours': '8h às 22h',
-        'features': ['Bowl', 'Street', 'Half-pipe', 'Corrimão'],
-        'description': 'Pista completa no centro da cidade com estruturas variadas para todos os níveis.',
-        'images': ['assets/images/skateparks/SkateCity.png', 'assets/images/skateparks/SkateCity2.png'],
-      },
-      {
-        'name': 'AAAAAA FECHADA',
-        'type': 'Bowl',
-        'lat': -23.5729,
-        'lng': -46.6412,
-        'rating': 4.8,
-        'address': 'Zona Sul',
-        'hours': '6h às 20h',
-        'features': ['Bowl', 'Mini Ramp'],
-        'description': 'Bowl clássico perfeito para manobras aéreas e transições suaves.',
-        'images': ['assets/images/skateparks/Rajas1.png', 'assets/images/skateparks/Rajas2.png'],
-      },
-      {
-        'name': 'Quadespra',
-        'type': 'Plaza',
-        'lat': -23.5200,
-        'lng': -46.6094,
-        'rating': 4.2,
-        'address': 'Rua Lacônia, 266 - Vila Alexandria, São Paulo',
-        'hours': '7h às 18h',
-        'features': ['Plaza', 'Street', 'Escadas'],
-        'description': 'Plaza urbana com obstáculos técnicos para street skating avançado.',
-        'images': ['assets/images/skateparks/image2.png', 'assets/images/skateparks/image9.png'],
-      },
-    ];
+    final skateparks = _skateparkService.getAllSkateparks();
 
     setState(() {
       _filteredSkateparks = skateparks.where((park) {
-        // Filtro por distância
         if (_selectedDistance != 'Todas' && _currentPosition != null) {
           double distance = Geolocator.distanceBetween(
             _currentPosition!.latitude,
             _currentPosition!.longitude,
-            park['lat'] as double,
-            park['lng'] as double,
+            park.lat,
+            park.lng,
           ) / 1000;
           switch (_selectedDistance) {
             case 'Até 1 km':
@@ -142,19 +110,16 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
           }
         }
 
-        // Filtro por avaliação
-        if (_selectedRating > 0 && (park['rating'] as double) < _selectedRating) {
+        if (_selectedRating > 0 && park.rating < _selectedRating) {
           return false;
         }
 
-        // Filtro por tipo
-        if (_selectedType != 'Todos' && park['type'] != _selectedType) {
+        if (_selectedType != 'Todos' && park.type != _selectedType) {
           return false;
         }
 
-        // Filtro por horário
         if (_selectedHours != 'Todos') {
-          String hours = park['hours'] as String;
+          String hours = park.hours;
           switch (_selectedHours) {
             case 'Manhã (6h-12h)':
               if (!hours.contains('6h') && !hours.contains('7h') && !hours.contains('8h')) return false;
@@ -173,18 +138,52 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
     });
   }
 
+  void _openWaze(double lat, double lng, [String? address]) async {
+    String wazeUrl;
+    String fallbackUrl;
+    
+    if (address != null && address.isNotEmpty) {
+      // Usa o endereço para navegação mais precisa
+      final encodedAddress = Uri.encodeComponent(address);
+      wazeUrl = 'waze://?q=$encodedAddress&navigate=yes';
+      fallbackUrl = 'https://waze.com/ul?q=$encodedAddress&navigate=yes';
+    } else {
+      // Fallback para coordenadas
+      wazeUrl = 'waze://?ll=$lat,$lng&navigate=yes';
+      fallbackUrl = 'https://waze.com/ul?ll=$lat,$lng&navigate=yes';
+    }
+    
+    try {
+      if (await canLaunchUrl(Uri.parse(wazeUrl))) {
+        await launchUrl(Uri.parse(wazeUrl), mode: LaunchMode.externalApplication);
+      } else {
+        await launchUrl(Uri.parse(fallbackUrl), mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      // Se falhar, tenta com coordenadas como último recurso
+      final coordUrl = 'https://waze.com/ul?ll=$lat,$lng&navigate=yes';
+      await launchUrl(Uri.parse(coordUrl), mode: LaunchMode.externalApplication);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      backgroundColor: const Color(0xFF043C70),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text(
           'Pistas',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
-        backgroundColor: const Color(0xFF2C2C2C),
+       flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF3888D2), Color(0xFF043C70)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
         actions: [
           Container(
@@ -219,7 +218,6 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
         itemBuilder: (context, index) {
           final park = _filteredSkateparks[index];
 
-          
           return Card(
             margin: const EdgeInsets.only(bottom: 16),
             elevation: 3,
@@ -234,7 +232,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                   child: Stack(
                     children: [
                       _buildImageCarousel(
-                        park['images'] as List<String>, 
+                        park.images, 
                         index,
                       ),
                       Positioned(
@@ -262,7 +260,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      park['name'] as String,
+                                      park.name,
                                       style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
@@ -277,7 +275,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
-                                      park['type'] as String,
+                                      park.type,
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 12,
@@ -293,14 +291,14 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                                   const Icon(Icons.location_on, size: 16, color: Colors.white70),
                                   const SizedBox(width: 4),
                                   Text(
-                                    _calculateDistance(park['lat'] as double, park['lng'] as double),
+                                    _calculateDistance(park.lat, park.lng),
                                     style: const TextStyle(color: Colors.white70),
                                   ),
                                   const SizedBox(width: 16),
                                   const Icon(Icons.star, size: 16, color: Colors.amber),
                                   const SizedBox(width: 4),
                                   Text(
-                                    park['rating'].toString(),
+                                    park.rating.toString(),
                                     style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
                                   ),
                                 ],
@@ -320,7 +318,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
     );
   }
 
-  void _showParkDetails(BuildContext context, Map<String, dynamic> park) {
+  void _showParkDetails(BuildContext context, Skatepark park) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -351,13 +349,12 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                // Carrossel de imagens da pista no modal
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: SizedBox(
                     height: 200,
                     width: double.infinity,
-                    child: _buildModalImageCarousel(park['images'] as List<String>),
+                    child: _buildModalImageCarousel(park.images),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -366,7 +363,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        park['name'] as String,
+                        park.name,
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -383,7 +380,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        park['type'] as String,
+                        park.type,
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500,
@@ -394,7 +391,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  park['description'] as String,
+                  park.description,
                   style: TextStyle(
                     fontSize: 16,
                     color: Theme.of(context).brightness == Brightness.dark 
@@ -403,18 +400,18 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                _buildInfoRow(Icons.location_on, park['address'] as String),
+                _buildInfoRow(Icons.location_on, park.address),
                 const SizedBox(height: 8),
-                _buildInfoRow(Icons.access_time, 'Aberto das ${park['hours']}'),
+                _buildInfoRow(Icons.access_time, 'Aberto das ${park.hours}'),
                 const SizedBox(height: 8),
-                _buildInfoRow(Icons.directions, _calculateDistance(park['lat'] as double, park['lng'] as double)),
+                _buildInfoRow(Icons.directions, _calculateDistance(park.lat, park.lng)),
                 const SizedBox(height: 8),
                 Row(
                   children: [
                     const Icon(Icons.star, color: Colors.amber, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      '${park['rating']} estrelas',
+                      '${park.rating} estrelas',
                       style: TextStyle(
                         fontSize: 16,
                         color: Theme.of(context).brightness == Brightness.dark 
@@ -439,7 +436,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: (park['features'] as List<String>).map((feature) => 
+                  children: park.features.map((feature) => 
                     Chip(
                       label: Text(
                         feature,
@@ -454,7 +451,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                       children: [
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () => _openWaze(park.lat, park.lng, park.address),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,
                               foregroundColor: Colors.white,
@@ -562,7 +559,6 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
             );
           },
         ),
-        // Indicadores de página
         if (images.length > 1)
           Positioned(
             bottom: 8,
@@ -586,7 +582,6 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
               }).toList(),
             ),
           ),
-        // Botões de navegação
         if (images.length > 1) ...[
           Positioned(
             left: 8,
@@ -699,7 +694,6 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                 );
               },
             ),
-            // Indicadores de página no modal
             if (images.length > 1)
               Positioned(
                 bottom: 12,
@@ -727,7 +721,6 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                   }).toList(),
                 ),
               ),
-            // Contador de imagens
             if (images.length > 1)
               Positioned(
                 top: 12,
@@ -808,7 +801,6 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                       ),
                       const SizedBox(height: 20),
                       
-                      // Filtro de Distância
                       _buildFilterSection('Distância', Icons.location_on, isDark, [
                         _buildRadioOption('Todas', _selectedDistance, (value) {
                           setDialogState(() => _selectedDistance = value!);
@@ -826,7 +818,6 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                       
                       const SizedBox(height: 16),
                       
-                      // Filtro de Avaliação
                       _buildFilterSection('Avaliação Mínima', Icons.star, isDark, [
                         Slider(
                           value: _selectedRating,
@@ -842,7 +833,6 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                       
                       const SizedBox(height: 16),
                       
-                      // Filtro de Tipo
                       _buildFilterSection('Tipo de Pista', Icons.skateboarding, isDark, [
                         _buildRadioOption('Todos', _selectedType, (value) {
                           setDialogState(() => _selectedType = value!);
@@ -860,7 +850,6 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
                       
                       const SizedBox(height: 16),
                       
-                      // Filtro de Horário
                       _buildFilterSection('Horário', Icons.access_time, isDark, [
                         _buildRadioOption('Todos', _selectedHours, (value) {
                           setDialogState(() => _selectedHours = value!);

@@ -1,37 +1,87 @@
 class Skatepark {
   final String id;
   final String name;
-  final double latitude;
-  final double longitude;
+  final String type;
   final String address;
+  final double lat;
+  final double lng;
   final List<String> features;
-  final String imageUrl;
   final double rating;
-  final String openingHours;
+  final String hours;
+  final String description;
+  final List<String> images;
 
   Skatepark({
     required this.id,
     required this.name,
-    required this.latitude,
-    required this.longitude,
+    required this.type,
     required this.address,
+    required this.lat,
+    required this.lng,
     required this.features,
-    required this.imageUrl,
     required this.rating,
-    required this.openingHours,
+    required this.hours,
+    required this.description,
+    required this.images,
   });
 
-  factory Skatepark.fromMap(Map<String, dynamic> map) {
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'type': type,
+      'address': address,
+      'lat': lat,
+      'lng': lng,
+      'features': features,
+      'rating': rating,
+      'hours': hours,
+      'description': description,
+      'images': images,
+    };
+  }
+
+  factory Skatepark.fromJson(Map<String, dynamic> json) {
     return Skatepark(
-      id: map['id'],
-      name: map['name'],
-      latitude: map['latitude'],
-      longitude: map['longitude'],
-      address: map['address'],
-      features: List<String>.from(map['features'] ?? []),
-      imageUrl: map['imageUrl'] ?? '',
-      rating: map['rating'] ?? 0.0,
-      openingHours: map['openingHours'] ?? '',
+      id: json['id'],
+      name: json['name'],
+      type: json['type'],
+      address: json['address'],
+      lat: json['lat'].toDouble(),
+      lng: json['lng'].toDouble(),
+      features: List<String>.from(json['features']),
+      rating: json['rating'].toDouble(),
+      hours: json['hours'],
+      description: json['description'],
+      images: List<String>.from(json['images']),
+    );
+  }
+
+  Skatepark copyWith({
+    String? id,
+    String? name,
+    String? type,
+    String? address,
+    double? lat,
+    double? lng,
+    List<String>? features,
+    double? rating,
+    String? hours,
+    String? description,
+    List<String>? images,
+  }) {
+    return Skatepark(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      type: type ?? this.type,
+      address: address ?? this.address,
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
+      features: features ?? this.features,
+      rating: rating ?? this.rating,
+      hours: hours ?? this.hours,
+      description: description ?? this.description,
+      images: images ?? this.images,
     );
   }
 }

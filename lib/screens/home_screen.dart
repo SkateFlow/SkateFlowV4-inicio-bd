@@ -4,6 +4,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../main.dart';
+import '../services/skatepark_service.dart';
+import '../models/skatepark.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,12 +17,41 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Position? _currentPosition;
   final List<Marker> _markers = [];
+  final SkateparkService _skateparkService = SkateparkService();
 
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
     _loadNearbyParks();
+    _skateparkService.addListener(_onSkateparksUpdated);
+  }
+
+  @override
+  void dispose() {
+    _skateparkService.removeListener(_onSkateparksUpdated);
+    super.dispose();
+  }
+
+  void _onSkateparksUpdated() {
+    _loadNearbyParks();
+  }
+
+  String _calculateDistance(double lat, double lng) {
+    if (_currentPosition == null) return '-- km';
+    
+    // Calcula distância em linha reta (haversine)
+    double distance = Geolocator.distanceBetween(
+      _currentPosition!.latitude,
+      _currentPosition!.longitude,
+      lat,
+      lng,
+    ) / 1000;
+    
+    // Adiciona aproximadamente 15-20% para estimar distância real por ruas
+    double estimatedRoadDistance = distance * 1.18;
+    
+    return '${estimatedRoadDistance.toStringAsFixed(1)} km';
   }
 
   Future<void> _getCurrentLocation() async {
@@ -38,18 +69,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _loadNearbyParks() {
-    final parks = [
-      {'name': 'Skate City', 'lat': -23.5505, 'lng': -46.6333},
-      {'name': 'Rajas Skatepark', 'lat': -23.5729, 'lng': -46.6412},
-      {'name': 'Quadespra', 'lat': -23.5200, 'lng': -46.6094},
-    ];
+    final parks = _skateparkService.getAllSkateparks();
 
     setState(() {
       _markers.clear();
       for (final park in parks) {
         _markers.add(
           Marker(
-            point: LatLng(park['lat'] as double, park['lng'] as double),
+            point: LatLng(park.lat, park.lng),
             child: const Icon(
               Icons.location_on,
               color: Colors.red,
@@ -84,56 +111,11 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     ];
 
-    final nearbyParks = [
-      {
-        'name': 'Skate City',
-        'type': 'Street',
-        'distance': '1.2 km',
-        'rating': 4.5,
-        'address': 'Centro da cidade',
-        'hours': '8h às 22h',
-        'features': ['Bowl', 'Street', 'Half-pipe', 'Corrimão'],
-        'description':
-            'Pista completa no centro da cidade com estruturas variadas para todos os níveis.',
-        'images': [
-          'assets/images/skateparks/SkateCity.png',
-          'assets/images/skateparks/SkateCity2.png'
-        ],
-      },
-      {
-        'name': 'Rajas Skatepark',
-        'type': 'Bowl',
-        'distance': '2.5 km',
-        'rating': 4.8,
-        'address': 'Zona Sul',
-        'hours': '6h às 20h',
-        'features': ['Bowl', 'Mini Ramp'],
-        'description':
-            'Bowl clássico perfeito para manobras aéreas e transições suaves.',
-        'images': [
-          'assets/images/skateparks/Rajas1.png',
-          'assets/images/skateparks/Rajas2.png'
-        ],
-      },
-      {
-        'name': 'Quadespra',
-        'type': 'Plaza',
-        'distance': '3.1 km',
-        'rating': 4.2,
-        'address': 'Zona Norte',
-        'hours': '7h às 18h',
-        'features': ['Plaza', 'Street', 'Escadas'],
-        'description':
-            'Plaza urbana com obstáculos técnicos para street skating avançado.',
-        'images': [
-          'assets/images/skateparks/image2.png',
-          'assets/images/skateparks/image9.png'
-        ],
-      },
-    ];
+    final nearbyParks = _skateparkService.getAllSkateparks();
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           'SkateFlow',
           style: TextStyle(fontWeight: FontWeight.w900),
@@ -169,7 +151,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -207,7 +188,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Eventos em Destaque
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -345,7 +325,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            // Pistas Próximas
             Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
@@ -390,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(30),
                         child: Image.asset(
-                          (park['images'] as List<String>)[0],
+                          park.images[0],
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
@@ -403,7 +382,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     title: Text(
-                      park['name'] as String,
+                      park.name,
                       style: TextStyle(
                           fontWeight: FontWeight.bold, 
                           fontSize: 16,
@@ -425,7 +404,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                park['type'] as String,
+                                park.type,
                                 style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -436,7 +415,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             const Icon(Icons.location_on,
                                 size: 14, color: Colors.grey),
                             const SizedBox(width: 2),
-                            Text(park['distance'] as String,
+                            Text(_calculateDistance(park.lat, park.lng),
                                 style: const TextStyle(color: Colors.grey)),
                           ],
                         ),
@@ -447,7 +426,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 size: 16, color: Colors.amber),
                             const SizedBox(width: 4),
                             Text(
-                              park['rating'].toString(),
+                              park.rating.toString(),
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   color: Theme.of(context).brightness == Brightness.dark 
@@ -465,7 +444,6 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
 
-            // Mapa das Pistas
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
@@ -727,7 +705,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showParkDetails(BuildContext context, Map<String, dynamic> park) {
+  void _showParkDetails(BuildContext context, Skatepark park) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -763,8 +741,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: SizedBox(
                         height: 200,
                         width: double.infinity,
-                        child: _buildModalImageCarousel(
-                            park['images'] as List<String>),
+                        child: _buildModalImageCarousel(park.images),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -773,7 +750,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            park['name'] as String,
+                            park.name,
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -791,7 +768,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            park['type'] as String,
+                            park.type,
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
@@ -802,7 +779,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      park['description'] as String,
+                      park.description,
                       style: TextStyle(
                         fontSize: 16,
                         color: Theme.of(context).brightness == Brightness.dark 
@@ -811,19 +788,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _buildInfoRow(Icons.location_on, park['address'] as String),
+                    _buildInfoRow(Icons.location_on, park.address),
                     const SizedBox(height: 8),
-                    _buildInfoRow(
-                        Icons.access_time, 'Aberto das ${park['hours']}'),
+                    _buildInfoRow(Icons.access_time, 'Aberto das ${park.hours}'),
                     const SizedBox(height: 8),
-                    _buildInfoRow(Icons.directions, park['distance'] as String),
+                    _buildInfoRow(Icons.directions, _calculateDistance(park.lat, park.lng)),
                     const SizedBox(height: 8),
                     Row(
                       children: [
                         const Icon(Icons.star, color: Colors.amber, size: 20),
                         const SizedBox(width: 8),
                         Text(
-                          '${park['rating']} estrelas',
+                          '${park.rating} estrelas',
                           style: TextStyle(
                             fontSize: 16,
                             color: Theme.of(context).brightness == Brightness.dark 
@@ -848,7 +824,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: (park['features'] as List<String>)
+                      children: park.features
                           .map(
                             (feature) => Chip(
                               label: Text(
@@ -871,7 +847,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () => _openWaze(-23.5505, -46.6333),
+                            onPressed: () => _openWaze(park.lat, park.lng, park.address),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,
                               foregroundColor: Colors.white,
@@ -1087,10 +1063,31 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _openWaze(double lat, double lng) async {
-    final wazeUrl = 'https://waze.com/ul?ll=$lat,$lng&navigate=yes';
-    if (await canLaunchUrl(Uri.parse(wazeUrl))) {
-      await launchUrl(Uri.parse(wazeUrl), mode: LaunchMode.externalApplication);
+  void _openWaze(double lat, double lng, [String? address]) async {
+    String wazeUrl;
+    String fallbackUrl;
+    
+    if (address != null && address.isNotEmpty) {
+      // Usa o endereço para navegação mais precisa
+      final encodedAddress = Uri.encodeComponent(address);
+      wazeUrl = 'waze://?q=$encodedAddress&navigate=yes';
+      fallbackUrl = 'https://waze.com/ul?q=$encodedAddress&navigate=yes';
+    } else {
+      // Fallback para coordenadas
+      wazeUrl = 'waze://?ll=$lat,$lng&navigate=yes';
+      fallbackUrl = 'https://waze.com/ul?ll=$lat,$lng&navigate=yes';
+    }
+    
+    try {
+      if (await canLaunchUrl(Uri.parse(wazeUrl))) {
+        await launchUrl(Uri.parse(wazeUrl), mode: LaunchMode.externalApplication);
+      } else {
+        await launchUrl(Uri.parse(fallbackUrl), mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      // Se falhar, tenta com coordenadas como último recurso
+      final coordUrl = 'https://waze.com/ul?ll=$lat,$lng&navigate=yes';
+      await launchUrl(Uri.parse(coordUrl), mode: LaunchMode.externalApplication);
     }
   }
 }
