@@ -43,8 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 () => _navigateTo(context, '/edit-profile')),
             _buildTile(Icons.camera_alt, 'Alterar Foto de Perfil',
                 () => _navigateTo(context, '/change-photo')),
-            _buildTile(Icons.privacy_tip, 'Privacidade',
-                () => _navigateTo(context, '/privacy')),
+
           ]),
           _buildSection('App', [
             _buildThemeToggle(),
@@ -191,8 +190,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return const edit.EditProfileScreen();
       case '/change-photo':
         return const photo.ChangePhotoScreen();
-      case '/privacy':
-        return const Scaffold(body: Center(child: Text("Em desenvolvimento")));
+
 
       case '/notifications':
         return const NotificationsSettingsScreen();

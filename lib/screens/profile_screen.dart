@@ -198,13 +198,7 @@ class ProfileScreen extends StatelessWidget {
                         user['favoriteSpot'] as String,
                         Colors.blue,
                       ),
-                      const SizedBox(height: 12),
-                      _buildInfoCard(
-                        Icons.emoji_events,
-                        'Conquistas',
-                        '12 badges desbloqueados',
-                        Colors.amber,
-                      ),
+
                     ],
                   ),
                 ),
