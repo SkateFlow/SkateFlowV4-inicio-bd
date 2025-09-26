@@ -248,55 +248,49 @@ class HelpScreen extends StatelessWidget {
   void _showHelpDetail(BuildContext context, Map<String, dynamic> item) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        maxChildSize: 0.9,
-        minChildSize: 0.5,
-        builder: (context, scrollController) => Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(2),
-                ),
+      builder: (context) => Container(
+        height: 500,
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
               ),
-              const SizedBox(height: 7),
-              Icon(
-                item['icon'] as IconData,
-                size: 32,
-                color: const Color(0xFF043C70),
+            ),
+            const SizedBox(height: 16),
+            Icon(
+              item['icon'] as IconData,
+              size: 32,
+              color: const Color(0xFF043C70),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              item['title'] as String,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 3),
-              Text(
-                item['title'] as String,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 7),
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  child: Text(
-                    _getHelpContent(item['title'] as String),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      height: 1.5,
-                    ),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(
+                  _getHelpContent(item['title'] as String),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    height: 1.5,
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

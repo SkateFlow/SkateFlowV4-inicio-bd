@@ -46,12 +46,16 @@ class _MapScreenState extends State<MapScreen> {
       _currentPosition!.longitude,
       lat,
       lng,
-    ) / 1000;
+    );
     
-    // Adiciona aproximadamente 15-20% para estimar distância real por ruas
-    double estimatedRoadDistance = distance * 1.18;
-    
-    return '${estimatedRoadDistance.toStringAsFixed(1)} km';
+    // Converte para km ou metros dependendo da distância
+    if (distance < 1000) {
+      return '${distance.round()} m';
+    } else {
+      // Adiciona aproximadamente 15-20% para estimar distância real por ruas
+      double estimatedRoadDistance = (distance / 1000) * 1.18;
+      return '${estimatedRoadDistance.toStringAsFixed(1)} km';
+    }
   }
   
   Future<void> _getCurrentLocation() async {
@@ -63,15 +67,60 @@ class _MapScreenState extends State<MapScreen> {
       }
     }
     
-    final position = await Geolocator.getCurrentPosition();
-    setState(() {
-      _currentPosition = position;
-    });
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
     
-    _mapController.move(
-      LatLng(position.latitude, position.longitude),
-      16,
-    );
+    try {
+      // Verifica se o serviço de localização está habilitado
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw Exception('Serviço de localização desabilitado');
+      }
+      
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best,
+        timeLimit: const Duration(seconds: 10),
+      );
+      
+      debugPrint('Localização obtida: ${position.latitude}, ${position.longitude}');
+      debugPrint('Precisão: ${position.accuracy}m');
+      
+      setState(() {
+        _currentPosition = position;
+      });
+      
+      _mapController.move(
+        LatLng(position.latitude, position.longitude),
+        16,
+      );
+    } catch (e) {
+      debugPrint('Erro ao obter localização: $e');
+      // Para emulador, usa localização de São Paulo
+      final defaultPosition = Position(
+        latitude: -23.5505,
+        longitude: -46.6333,
+        timestamp: DateTime.now(),
+        accuracy: 10,
+        altitude: 0,
+        altitudeAccuracy: 0,
+        heading: 0,
+        headingAccuracy: 0,
+        speed: 0,
+        speedAccuracy: 0,
+      );
+      
+      debugPrint('Usando localização padrão: São Paulo');
+      
+      setState(() {
+        _currentPosition = defaultPosition;
+      });
+      
+      _mapController.move(
+        LatLng(defaultPosition.latitude, defaultPosition.longitude),
+        14,
+      );
+    }
   }
   
   void _loadSkateparks() {
