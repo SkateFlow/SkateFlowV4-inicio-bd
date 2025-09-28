@@ -14,7 +14,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     _navigateToMain();
   }
 
-  _navigateToMain() async {
+  Future<void> _navigateToMain() async {
     await Future.delayed(const Duration(milliseconds: 1500));
     if (mounted) {
       Navigator.pushReplacementNamed(context, '/main');

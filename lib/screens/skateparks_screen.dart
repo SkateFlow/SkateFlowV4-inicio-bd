@@ -169,6 +169,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text(
@@ -649,11 +650,11 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
   }
 
   Widget _buildModalImageCarousel(List<String> images) {
+    int currentModalPage = 0;
+    PageController modalController = PageController();
+    
     return StatefulBuilder(
       builder: (context, setModalState) {
-        int currentModalPage = 0;
-        PageController modalController = PageController();
-        
         return Stack(
           children: [
             PageView.builder(
