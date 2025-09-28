@@ -54,6 +54,29 @@ class _HomeScreenState extends State<HomeScreen> {
     return '${estimatedRoadDistance.toStringAsFixed(1)} km';
   }
 
+  List<Skatepark> _getNearbyParks(List<Skatepark> parks, int limit) {
+    if (_currentPosition == null) return parks.take(limit).toList();
+    
+    // Ordena as pistas por distância
+    parks.sort((a, b) {
+      double distanceA = Geolocator.distanceBetween(
+        _currentPosition!.latitude,
+        _currentPosition!.longitude,
+        a.lat,
+        a.lng,
+      );
+      double distanceB = Geolocator.distanceBetween(
+        _currentPosition!.latitude,
+        _currentPosition!.longitude,
+        b.lat,
+        b.lng,
+      );
+      return distanceA.compareTo(distanceB);
+    });
+    
+    return parks.take(limit).toList();
+  }
+
   Future<void> _getCurrentLocation() async {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -111,7 +134,9 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     ];
 
-    final nearbyParks = _skateparkService.getAllSkateparks();
+    // Pega as 3 pistas mais próximas
+    final allParks = _skateparkService.getAllSkateparks();
+    final nearbyParks = _getNearbyParks(allParks, 3);
 
     return Scaffold(
       appBar: AppBar(
@@ -340,7 +365,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             : Colors.black),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const MainScreen(initialIndex: 2),
+                        ),
+                      );
+                    },
                     child: const Text('Ver todas'),
                   ),
                 ],

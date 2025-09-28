@@ -21,9 +21,11 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
   double _selectedRating = 0.0;
   String _selectedType = 'Todos';
   String _selectedHours = 'Todos';
+  String _searchQuery = '';
   List<Skatepark> _filteredSkateparks = [];
   Position? _currentPosition;
   final SkateparkService _skateparkService = SkateparkService();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -39,6 +41,7 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
   @override
   void dispose() {
     _skateparkService.removeListener(_onSkateparksUpdated);
+    _searchController.dispose();
     for (final controller in _pageControllers.values) {
       controller.dispose();
     }
@@ -133,6 +136,13 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
           }
         }
 
+        // Filtro de pesquisa
+        if (_searchQuery.isNotEmpty) {
+          return park.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                 park.address.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                 park.type.toLowerCase().contains(_searchQuery.toLowerCase());
+        }
+
         return true;
       }).toList();
     });
@@ -192,7 +202,14 @@ class _SkateparksScreenState extends State<SkateparksScreen> {
             margin: const EdgeInsets.only(right: 8),
             height: 40,
             child: TextField(
+              controller: _searchController,
               style: const TextStyle(color: Colors.white),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+                _applyFilters();
+              },
               decoration: InputDecoration(
                 hintText: 'Pesquisar pistas...',
                 hintStyle: const TextStyle(color: Colors.white70),

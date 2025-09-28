@@ -18,12 +18,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _confirmPasswordError = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  String? _passwordErrorMessage;
+
+  String? _validatePassword(String password) {
+    if (password.isEmpty) return null;
+    if (password.length < 8) {
+      return 'Mínimo 8 caracteres';
+    }
+    if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(password)) {
+      return 'Apenas letras e números';
+    }
+    return null;
+  }
 
   void _register() {
+    final passwordValidation = _validatePassword(_passwordController.text);
+    
     setState(() {
       _nameError = _nameController.text.isEmpty;
       _emailError = _emailController.text.isEmpty;
-      _passwordError = _passwordController.text.isEmpty;
+      _passwordError = _passwordController.text.isEmpty || passwordValidation != null;
+      _passwordErrorMessage = passwordValidation;
       _confirmPasswordError = _confirmPasswordController.text.isEmpty ||
           _confirmPasswordController.text != _passwordController.text;
     });
@@ -240,14 +255,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                               filled: true,
                               fillColor: Colors.white.withValues(alpha: 0.1),
+                              errorText: _passwordError && _passwordErrorMessage != null
+                                  ? _passwordErrorMessage
+                                  : null,
                             ),
                             obscureText: _obscurePassword,
                             onChanged: (value) {
-                              if (_passwordError && value.isNotEmpty) {
-                                setState(() {
-                                  _passwordError = false;
-                                });
-                              }
+                              final validation = _validatePassword(value);
+                              setState(() {
+                                _passwordError = validation != null;
+                                _passwordErrorMessage = validation;
+                              });
                             },
                           ),
                           const SizedBox(height: 16),

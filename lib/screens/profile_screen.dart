@@ -120,13 +120,8 @@ class ProfileScreen extends StatelessWidget {
                     color: Colors.grey.shade50,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildStatColumn('Sessões', user['sessionsCount'].toString()),
-                      _buildStatColumn('Tempo Total', user['totalTime'].toString()),
-                      _buildStatColumn('Nível', user['level'].toString()),
-                    ],
+                  child: Center(
+                    child: _buildStatColumn('Nível', user['level'].toString()),
                   ),
                 ),
                 
@@ -206,7 +201,7 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(height: 30),
                 
                 // Menu Options
-                _buildMenuOption(Icons.history, 'Histórico de Sessões', () {}),
+
                 _buildMenuOption(Icons.favorite, 'Pistas Favoritas', () {
                   Navigator.push(
                     context,

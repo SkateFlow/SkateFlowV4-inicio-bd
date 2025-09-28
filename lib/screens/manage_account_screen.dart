@@ -140,36 +140,6 @@ class ManageAccountScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // Seção Dados
-            const Text(
-              'Dados da Conta',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            _buildOptionCard(
-              Icons.download,
-              'Baixar Meus Dados',
-              'Faça download de todas as suas informações',
-              () {
-                _showDownloadDataDialog(context);
-              },
-            ),
-
-            _buildOptionCard(
-              Icons.visibility_off,
-              'Desativar Conta',
-              'Desative temporariamente sua conta',
-              () {
-                _showDeactivateDialog(context);
-              },
-            ),
-
-            const SizedBox(height: 24),
-
             // Zona de Perigo
             Container(
               padding: const EdgeInsets.all(16),
@@ -283,61 +253,7 @@ class ManageAccountScreen extends StatelessWidget {
     );
   }
 
-  void _showDownloadDataDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Baixar Dados'),
-        content: const Text(
-            'Seus dados serão preparados e enviados por email em até 48 horas.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text('Solicitação de dados registrada')),
-              );
-            },
-            child: const Text('Solicitar'),
-          ),
-        ],
-      ),
-    );
-  }
 
-  void _showDeactivateDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Desativar Conta'),
-        content: const Text(
-            'Sua conta será desativada temporariamente. Você pode reativá-la fazendo login novamente.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text(
-                        'Conta será desativada após implementação do banco de dados')),
-              );
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-            child: const Text('Desativar'),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _showDeleteAccountDialog(BuildContext context) {
     showDialog(

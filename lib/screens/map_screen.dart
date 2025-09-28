@@ -18,6 +18,8 @@ class _MapScreenState extends State<MapScreen> {
   Position? _currentPosition;
   final List<Marker> _markers = [];
   final SkateparkService _skateparkService = SkateparkService();
+  final List<String> _selectedTypes = [];
+  double _maxDistance = 50.0;
   
   @override
   void initState() {
@@ -98,39 +100,58 @@ class _MapScreenState extends State<MapScreen> {
       );
     } catch (e) {
       debugPrint('Erro ao obter localização: $e');
-      // Para emulador, usa localização de São Paulo
-      final defaultPosition = Position(
-        latitude: -23.5505,
-        longitude: -46.6333,
-        timestamp: DateTime.now(),
-        accuracy: 10,
-        altitude: 0,
-        altitudeAccuracy: 0,
-        heading: 0,
-        headingAccuracy: 0,
-        speed: 0,
-        speedAccuracy: 0,
-      );
-      
-      debugPrint('Usando localização padrão: São Paulo');
-      
-      setState(() {
-        _currentPosition = defaultPosition;
-      });
-      
-      _mapController.move(
-        LatLng(defaultPosition.latitude, defaultPosition.longitude),
-        14,
-      );
+      // Tenta novamente com configurações menos restritivas
+      try {
+        final position = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.medium,
+            timeLimit: Duration(seconds: 30),
+          ),
+        );
+        
+        setState(() {
+          _currentPosition = position;
+        });
+        
+        _mapController.move(
+          LatLng(position.latitude, position.longitude),
+          16,
+        );
+      } catch (e2) {
+        debugPrint('Erro ao obter localização (segunda tentativa): $e2');
+        // Só usa localização padrão se realmente não conseguir
+        final defaultPosition = Position(
+          latitude: -23.5505,
+          longitude: -46.6333,
+          timestamp: DateTime.now(),
+          accuracy: 10,
+          altitude: 0,
+          altitudeAccuracy: 0,
+          heading: 0,
+          headingAccuracy: 0,
+          speed: 0,
+          speedAccuracy: 0,
+        );
+        
+        setState(() {
+          _currentPosition = defaultPosition;
+        });
+        
+        _mapController.move(
+          LatLng(defaultPosition.latitude, defaultPosition.longitude),
+          14,
+        );
+      }
     }
   }
   
   void _loadSkateparks() {
     final skateparks = _skateparkService.getAllSkateparks();
+    final filteredParks = _applyFilters(skateparks);
     
     setState(() {
       _markers.clear();
-      for (final park in skateparks) {
+      for (final park in filteredParks) {
         _markers.add(
           Marker(
             point: LatLng(
@@ -141,7 +162,7 @@ class _MapScreenState extends State<MapScreen> {
               onTap: () => _showParkDetails(park),
               child: const Icon(
                 Icons.location_on,
-                color: Colors.red,
+                color: Color(0xFF00294F),
                 size: 40,
               ),
             ),
@@ -149,6 +170,120 @@ class _MapScreenState extends State<MapScreen> {
         );
       }
     });
+  }
+
+  List<Skatepark> _applyFilters(List<Skatepark> parks) {
+    return parks.where((park) {
+      // Filtro por tipo
+      if (_selectedTypes.isNotEmpty && !_selectedTypes.contains(park.type)) {
+        return false;
+      }
+      
+      // Filtro por distância
+      if (_currentPosition != null) {
+        double distance = Geolocator.distanceBetween(
+          _currentPosition!.latitude,
+          _currentPosition!.longitude,
+          park.lat,
+          park.lng,
+        ) / 1000; // Converte para km
+        
+        if (distance > _maxDistance) {
+          return false;
+        }
+      }
+      
+      return true;
+    }).toList();
+  }
+
+  void _showFilterDialog() {
+    final allTypes = _skateparkService.getAllSkateparks()
+        .map((park) => park.type)
+        .toSet()
+        .toList();
+    
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Filtros'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Tipos de Pista',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  children: allTypes.map((type) {
+                    final isSelected = _selectedTypes.contains(type);
+                    return FilterChip(
+                      label: Text(type),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setDialogState(() {
+                          if (selected) {
+                            _selectedTypes.add(type);
+                          } else {
+                            _selectedTypes.remove(type);
+                          }
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Distância Máxima',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text('${_maxDistance.round()} km'),
+                Slider(
+                  value: _maxDistance,
+                  min: 1,
+                  max: 100,
+                  divisions: 99,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      _maxDistance = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setDialogState(() {
+                  _selectedTypes.clear();
+                  _maxDistance = 50.0;
+                });
+              },
+              child: const Text('Limpar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _loadSkateparks();
+              },
+              child: const Text('Aplicar'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _showParkDetails(Skatepark park) {
@@ -583,6 +718,7 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           'Mapa',
           style: TextStyle(fontWeight: FontWeight.w900),
@@ -600,7 +736,7 @@ class _MapScreenState extends State<MapScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
-            onPressed: () {},
+            onPressed: _showFilterDialog,
           ),
         ],
       ),
