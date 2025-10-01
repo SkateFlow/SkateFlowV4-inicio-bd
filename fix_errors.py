@@ -4,9 +4,9 @@ import re
 def fix_flutter_errors(directory):
     """Fix Flutter errors in all Dart files"""
     
-    # Pattern to match withValues(alpha: x) and replace with withOpacity(x)
-    with_values_pattern = r'\.withValues\(alpha:\s*([0-9.]+)\)'
-    with_opacity_replacement = r'.withOpacity(\1)'
+    # Pattern to match withOpacity(x) and replace with withValues(alpha: x)
+    with_opacity_pattern = r'\.withOpacity\(([0-9.]+)\)'
+    with_values_replacement = r'.withValues(alpha: \1)'
     
     # Pattern to match activeThumbColor parameter
     active_thumb_pattern = r',?\s*activeThumbColor:\s*[^,\n]+,?'
@@ -31,8 +31,8 @@ def fix_flutter_errors(directory):
             
             original_content = content
             
-            # Fix withValues -> withOpacity
-            content = re.sub(with_values_pattern, with_opacity_replacement, content)
+            # Fix withOpacity -> withValues
+            content = re.sub(with_opacity_pattern, with_values_replacement, content)
             
             # Fix activeThumbColor parameter
             content = re.sub(active_thumb_pattern, '', content)
@@ -45,10 +45,10 @@ def fix_flutter_errors(directory):
                     f.write(content)
                 
                 # Count fixes
-                with_values_fixes = len(re.findall(with_values_pattern, original_content))
+                with_opacity_fixes = len(re.findall(with_opacity_pattern, original_content))
                 active_thumb_fixes = len(re.findall(active_thumb_pattern, original_content))
                 
-                file_fixes = with_values_fixes + active_thumb_fixes
+                file_fixes = with_opacity_fixes + active_thumb_fixes
                 total_fixes += file_fixes
                 fixed_files += 1
                 

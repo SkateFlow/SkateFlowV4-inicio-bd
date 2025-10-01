@@ -1,34 +1,51 @@
-class User {
-  final String id;
-  final String name;
-  final String username;
-  final String email;
-  final String bio;
-  final String profileImageUrl;
-  final int followers;
-  final int following;
+import 'dart:convert';
 
-  User({
-    required this.id,
-    required this.name,
-    required this.username,
+class Usuario {
+  int? id;
+  String nome;
+  String email;
+  String senha;
+  String nivelAcesso;
+  String? statusUsuario;
+  String? dataCadastro;
+  String? foto; // codificado em base64
+
+  Usuario({
+    this.id,
+    required this.nome,
     required this.email,
-    required this.bio,
-    required this.profileImageUrl,
-    required this.followers,
-    required this.following,
+    required this.senha,
+    required this.nivelAcesso,
+    this.statusUsuario,
+    this.dataCadastro,
+    this.foto,
   });
 
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
-      id: map['id'],
-      name: map['name'],
-      username: map['username'],
-      email: map['email'],
-      bio: map['bio'] ?? '',
-      profileImageUrl: map['profileImageUrl'] ?? '',
-      followers: map['followers'] ?? 0,
-      following: map['following'] ?? 0,
+  /// Converte um JSON em um objeto Usuario
+  factory Usuario.fromJson(Map<String, dynamic> json) {
+    return Usuario(
+      id: json['id'],
+      nome: json['nome'],
+      email: json['email'],
+      senha: json['senha'],
+      nivelAcesso: json['nivelAcesso'],
+      statusUsuario: json['statusUsuario'],
+      dataCadastro: json['dataCadastro'],
+      foto: json['foto'] != null ? base64Encode(List<int>.from(json['foto'])) : null,
     );
+  }
+
+  /// Converte um objeto Usuario em JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'nome': nome,
+      'email': email,
+      'senha': senha,
+      'nivelAcesso': nivelAcesso,
+      'statusUsuario': statusUsuario,
+      'dataCadastro': dataCadastro,
+      'foto': foto != null ? base64Decode(foto!) : null,
+    };
   }
 }

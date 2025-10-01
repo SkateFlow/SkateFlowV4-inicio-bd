@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../models/usuario.dart';
+import '../services/usuario_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,14 +16,48 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _passwordError = false;
   bool _obscurePassword = true;
 
-  void _login() {
+  void _login() async {
     setState(() {
       _emailError = _emailController.text.isEmpty;
       _passwordError = _passwordController.text.isEmpty;
     });
 
-    if (!_emailError && !_passwordError) {
-      Navigator.pushReplacementNamed(context, '/loading');
+    if (_emailError || _passwordError) return;
+
+    final email = _emailController.text.trim();
+    final senha = _passwordController.text;
+
+    try {
+      final usuario = await UsuarioService.login(email, senha);
+
+      if (usuario != null) {
+        // ✅ Login bem-sucedido
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login realizado com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Exemplo: redireciona para a rota '/home' com o usuário
+        Navigator.pushReplacementNamed(context, '/home', arguments: usuario);
+      } else {
+        // ❌ Credenciais inválidas
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Email ou senha inválidos'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      // ⚠️ Erro de conexão ou do servidor
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao conectar: $e'),
+          backgroundColor: Colors.orange,
+        ),
+      );
     }
   }
 
@@ -54,10 +90,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      'assets/images/skateparks/logo-branca.png',
+                    Container(
                       height: 260,
                       width: 260,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Icon(
+                        Icons.skateboarding,
+                        size: 100,
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -88,65 +132,31 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                               labelText: 'Email',
-                              prefixIcon: const Icon(
-                                Icons.email_outlined,
-                                color: Colors.white,
-                              ),
+                              prefixIcon: const Icon(Icons.email_outlined, color: Colors.white),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color:
-                                      _emailError ? Colors.red : Colors.white,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color:
-                                      _emailError ? Colors.red : Colors.white,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color:
-                                      _emailError ? Colors.red : Colors.black,
-                                  width: 2,
-                                ),
                               ),
                               labelStyle: TextStyle(
-                                color:
-                                    _emailError ? Colors.red : Colors.white70,
+                                color: _emailError ? Colors.red : Colors.white70,
                               ),
                               filled: true,
                               fillColor: Colors.white.withValues(alpha: 0.1),
-                              errorText: _emailError &&
-                                      _emailController.text.isNotEmpty
-                                  ? 'Email inválido'
-                                  : null,
+                              errorText: _emailError ? 'Digite seu email' : null,
                             ),
                             keyboardType: TextInputType.emailAddress,
-                            onChanged: (value) {
-                              if (_emailError && value.isNotEmpty) {
-                                setState(() {
-                                  _emailError = false;
-                                });
-                              }
-                            },
                           ),
                           const SizedBox(height: 16),
                           TextField(
                             controller: _passwordController,
+                            obscureText: _obscurePassword,
                             style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                               labelText: 'Senha',
-                              prefixIcon: const Icon(Icons.lock_outlined,
-                                  color: Colors.white),
+                              prefixIcon: const Icon(Icons.lock_outline, color: Colors.white),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _obscurePassword
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
+                                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                  color: Colors.white,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -156,45 +166,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: _passwordError
-                                      ? Colors.red
-                                      : Colors.white,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: _passwordError
-                                      ? Colors.red
-                                      : Colors.white,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: _passwordError
-                                      ? Colors.red
-                                      : Colors.black,
-                                  width: 2,
-                                ),
                               ),
                               labelStyle: TextStyle(
-                                color: _passwordError
-                                    ? Colors.red
-                                    : Colors.white70,
+                                color: _passwordError ? Colors.red : Colors.white70,
                               ),
                               filled: true,
                               fillColor: Colors.white.withValues(alpha: 0.1),
+                              errorText: _passwordError ? 'Digite sua senha' : null,
                             ),
-                            obscureText: _obscurePassword,
-                            onChanged: (value) {
-                              if (_passwordError && value.isNotEmpty) {
-                                setState(() {
-                                  _passwordError = false;
-                                });
-                              }
-                            },
                           ),
                           const SizedBox(height: 24),
                           SizedBox(
@@ -208,28 +187,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                elevation: 2,
                               ),
-                              child: Text(
+                              child: const Text(
                                 'Entrar',
-                                style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
                           const SizedBox(height: 16),
                           TextButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => _buildForgotPasswordScreen(),
-                                ),
-                              );
+                              // Coloque a lógica da recuperação de senha se quiser
                             },
-                            child: Text(
+                            child: const Text(
                               'Esqueceu a senha?',
-                              style: const TextStyle(color: Colors.white),
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                         ],
@@ -240,179 +212,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         Navigator.pushNamed(context, '/register');
                       },
-                      child: Text(
+                      child: const Text(
                         'Não tem conta? Cadastre-se',
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildForgotPasswordScreen() {
-    final TextEditingController emailController = TextEditingController();
-
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: const Text('Esqueceu a Senha',
-            style: TextStyle(fontWeight: FontWeight.w900)),
-        backgroundColor: const Color(0xFF00294F),
-        foregroundColor: Colors.white,
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFF00294F),
-              Color(0xFF001426),
-              Color(0xFF010A12),
-              Color(0xFF00294F)
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: SingleChildScrollView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height - 48,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.lock_reset,
-                      color: Colors.white,
-                      size: 80,
-                    ),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'Recuperar Senha',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Digite seu email para receber as instruções\nde recuperação de senha',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 48),
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF08243E),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          TextField(
-                            controller: emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              labelText: 'Email',
-                              prefixIcon: const Icon(
-                                Icons.email_outlined,
-                                color: Colors.white,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Colors.white),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Colors.white),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Colors.black, width: 2),
-                              ),
-                              labelStyle: const TextStyle(color: Colors.white70),
-                              filled: true,
-                              fillColor: Colors.white.withValues(alpha: 0.1),
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Email de recuperação enviado! Verifique sua caixa de entrada.',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    backgroundColor: const Color(0xFF00294F),
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                );
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                elevation: 2,
-                              ),
-                              child: const Text(
-                                'Enviar Email',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        'Voltar ao Login',
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
                   ],
