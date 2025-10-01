@@ -3,35 +3,61 @@ import 'package:http/http.dart' as http;
 import '../models/usuario.dart';
 
 class UsuarioService {
-  static const String _baseUrl = 'http://localhost:8080'; // Certifique-se de usar o IP correto, se necessário
+  static const String _baseUrl = 'http://localhost:8080'; // Ajuste se necessário
 
-  // Método para listar usuários
-  static Future<List<Usuario>?> listarUsuarios() async {
+  // ------------------------------
+  // LOGIN DO USUÁRIO
+  // ------------------------------
+  static Future<Usuario?> loginUsuario(String email, String senha) async {
     try {
-      // Exibe a URL da requisição para depuração
-      print('Tentando conectar em: $_baseUrl/usuario/listar');
-      
-      final response = await http.get(
-        Uri.parse('$_baseUrl/usuario/listar'),  // Alteração para /usuario/listar
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-      ).timeout(const Duration(seconds: 10));
-
-      print('Status: ${response.statusCode}');
-      print('Response: ${response.body}');
+      final response = await http
+          .post(
+            Uri.parse('$_baseUrl/usuario/login'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: jsonEncode({'email': email, 'senha': senha}),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
-        // Parseando a resposta para uma lista de usuários
-        final List<dynamic> jsonList = jsonDecode(response.body);
-        return jsonList.map((json) => Usuario.fromJson(json)).toList();
+        return Usuario.fromJson(jsonDecode(response.body));
       } else {
-        print('Erro HTTP: ${response.statusCode} - ${response.body}');
+        print('Erro HTTP login: ${response.statusCode} - ${response.body}');
         return null;
       }
     } catch (e) {
-      print('Erro de conexão: $e');
+      print('Erro de conexão login: $e');
+      rethrow;
+    }
+  }
+
+  // ------------------------------
+  // CADASTRO DE USUÁRIO
+  // ------------------------------
+  static Future<Usuario?> cadastrarUsuario(Usuario usuario) async {
+    try {
+      final response = await http
+          .post(
+            Uri.parse('$_baseUrl/usuario/save'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: jsonEncode(usuario.toMap()), // Envia todos os campos do model
+          )
+          .timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        // Cria o objeto Usuario a partir da resposta do backend
+        return Usuario.fromJson(jsonDecode(response.body));
+      } else {
+        print('Erro HTTP cadastro: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Erro de conexão cadastro: $e');
       rethrow;
     }
   }

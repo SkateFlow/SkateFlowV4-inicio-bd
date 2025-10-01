@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final senha = _passwordController.text;
 
     try {
-      final usuario = await UsuarioService.login(email, senha);
+      final usuario = await UsuarioService.loginUsuario(email, senha);
 
       if (usuario != null) {
         // ✅ Login bem-sucedido

@@ -1,23 +1,26 @@
 class Usuario {
-  final String id;
+  final String? id; // 🔹 id agora é opcional
   final String nome;
   final String email;
+  final String? senha; // opcional para casos de retorno do backend
   final String? fotoPerfil;
   final DateTime dataCriacao;
 
   Usuario({
-    required this.id,
+    this.id, // opcional
     required this.nome,
     required this.email,
+    this.senha,
     this.fotoPerfil,
     required this.dataCriacao,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      if (id != null) 'id': id, // só envia se existir
       'nome': nome,
       'email': email,
+      'senha': senha,
       'fotoPerfil': fotoPerfil,
       'dataCriacao': dataCriacao.toIso8601String(),
     };
@@ -25,11 +28,14 @@ class Usuario {
 
   factory Usuario.fromMap(Map<String, dynamic> map) {
     return Usuario(
-      id: map['id'] ?? '',
+      id: map['id'],
       nome: map['nome'] ?? '',
       email: map['email'] ?? '',
+      senha: map['senha'],
       fotoPerfil: map['fotoPerfil'],
-      dataCriacao: DateTime.parse(map['dataCriacao'] ?? DateTime.now().toIso8601String()),
+      dataCriacao: DateTime.parse(
+        map['dataCriacao'] ?? DateTime.now().toIso8601String(),
+      ),
     );
   }
 

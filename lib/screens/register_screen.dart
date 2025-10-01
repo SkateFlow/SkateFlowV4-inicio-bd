@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../models/usuario.dart';
+import '../services/usuario_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -12,6 +14,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
   bool _nameError = false;
   bool _emailError = false;
   bool _passwordError = false;
@@ -22,18 +25,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   String? _validatePassword(String password) {
     if (password.isEmpty) return null;
-    if (password.length < 8) {
-      return 'Mínimo 8 caracteres';
-    }
+    if (password.length < 8) return 'Mínimo 8 caracteres';
     if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(password)) {
       return 'Apenas letras e números';
     }
     return null;
   }
 
-  void _register() {
+  void _register() async {
     final passwordValidation = _validatePassword(_passwordController.text);
-    
+
     setState(() {
       _nameError = _nameController.text.isEmpty;
       _emailError = _emailController.text.isEmpty;
@@ -43,11 +44,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
           _confirmPasswordController.text != _passwordController.text;
     });
 
-    if (!_nameError &&
-        !_emailError &&
-        !_passwordError &&
-        !_confirmPasswordError) {
-      Navigator.pushReplacementNamed(context, '/loading');
+    if (!_nameError && !_emailError && !_passwordError && !_confirmPasswordError) {
+      // Criar objeto Usuario sem id, pois será gerado pelo backend
+      Usuario usuario = Usuario(
+        nome: _nameController.text,
+        email: _emailController.text,
+        senha: _passwordController.text,
+        dataCriacao: DateTime.now(),
+      );
+
+      // Chamar serviço para cadastro
+      final result = await UsuarioService.cadastrarUsuario(usuario);
+
+      if (result != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cadastro realizado com sucesso!')),
+        );
+        Navigator.pop(context); // Volta para tela de login
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao cadastrar usuário.')),
+        );
+      }
     }
   }
 
@@ -62,7 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Color(0xFF00294F),
               Color(0xFF001426),
               Color(0xFF010A12),
-              Color(0xFF00294F)
+              Color(0xFF00294F),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -91,7 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       'Junte-se à comunidade skate',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white.withValues(alpha: 0.8),
+                        color: Colors.white.withOpacity(0.8),
                       ),
                     ),
                     const SizedBox(height: 48),
@@ -102,7 +120,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
+                            color: Colors.black.withOpacity(0.1),
                             blurRadius: 10,
                             offset: const Offset(0, 5),
                           ),
@@ -110,230 +128,89 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       child: Column(
                         children: [
+                          // Nome
                           TextField(
                             controller: _nameController,
                             style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                               labelText: 'Nome completo',
-                              prefixIcon: const Icon(
-                                Icons.person_outlined,
-                                color: Colors.white,
-                              ),
+                              prefixIcon: const Icon(Icons.person_outlined, color: Colors.white),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: _nameError ? Colors.red : Colors.white,
-                                ),
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: _nameError ? Colors.red : Colors.white,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: _nameError ? Colors.red : Colors.black,
-                                  width: 2,
-                                ),
-                              ),
-                              labelStyle: TextStyle(
-                                color: _nameError ? Colors.red : Colors.white70,
-                              ),
+                              errorText: _nameError ? 'Nome obrigatório' : null,
                               filled: true,
-                              fillColor: Colors.white.withValues(alpha: 0.1),
+                              fillColor: Colors.white.withOpacity(0.1),
                             ),
-                            textCapitalization: TextCapitalization.words,
-                            onChanged: (value) {
-                              if (_nameError && value.isNotEmpty) {
-                                setState(() {
-                                  _nameError = false;
-                                });
-                              }
-                            },
                           ),
                           const SizedBox(height: 16),
+                          // Email
                           TextField(
                             controller: _emailController,
                             style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                               labelText: 'Email',
-                              prefixIcon: const Icon(Icons.email_outlined,
-                                  color: Colors.white),
+                              prefixIcon: const Icon(Icons.email_outlined, color: Colors.white),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color:
-                                      _emailError ? Colors.red : Colors.white,
-                                ),
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color:
-                                      _emailError ? Colors.red : Colors.white,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color:
-                                      _emailError ? Colors.red : Colors.black,
-                                  width: 2,
-                                ),
-                              ),
-                              labelStyle: TextStyle(
-                                color:
-                                    _emailError ? Colors.red : Colors.white70,
-                              ),
+                              errorText: _emailError ? 'Email obrigatório' : null,
                               filled: true,
-                              fillColor: Colors.white.withValues(alpha: 0.1),
-                              errorText: _emailError &&
-                                      _emailController.text.isNotEmpty
-                                  ? 'Email inválido'
-                                  : null,
+                              fillColor: Colors.white.withOpacity(0.1),
                             ),
                             keyboardType: TextInputType.emailAddress,
-                            onChanged: (value) {
-                              if (_emailError && value.isNotEmpty) {
-                                setState(() {
-                                  _emailError = false;
-                                });
-                              }
-                            },
                           ),
                           const SizedBox(height: 16),
+                          // Senha
                           TextField(
                             controller: _passwordController,
                             style: const TextStyle(color: Colors.white),
+                            obscureText: _obscurePassword,
                             decoration: InputDecoration(
                               labelText: 'Senha',
-                              prefixIcon: const Icon(Icons.lock_outlined,
-                                  color: Colors.white),
+                              prefixIcon: const Icon(Icons.lock_outlined, color: Colors.white),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                    _obscurePassword
-                                        ? Icons.visibility_off
-                                        : Icons.visibility,
-                                    color: Colors.white),
+                                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                  color: Colors.white,
+                                ),
                                 onPressed: () {
                                   setState(() {
                                     _obscurePassword = !_obscurePassword;
                                   });
                                 },
                               ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: _passwordError
-                                      ? Colors.red
-                                      : Colors.white,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: _passwordError
-                                      ? Colors.red
-                                      : Colors.white,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: _passwordError
-                                      ? Colors.red
-                                      : Colors.black,
-                                  width: 2,
-                                ),
-                              ),
-                              labelStyle: TextStyle(
-                                color: _passwordError
-                                    ? Colors.red
-                                    : Colors.white70,
-                              ),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                              errorText: _passwordError ? _passwordErrorMessage : null,
                               filled: true,
-                              fillColor: Colors.white.withValues(alpha: 0.1),
-                              errorText: _passwordError && _passwordErrorMessage != null
-                                  ? _passwordErrorMessage
-                                  : null,
+                              fillColor: Colors.white.withOpacity(0.1),
                             ),
-                            obscureText: _obscurePassword,
-                            onChanged: (value) {
-                              final validation = _validatePassword(value);
-                              setState(() {
-                                _passwordError = validation != null;
-                                _passwordErrorMessage = validation;
-                              });
-                            },
                           ),
                           const SizedBox(height: 16),
+                          // Confirmar senha
                           TextField(
                             controller: _confirmPasswordController,
                             style: const TextStyle(color: Colors.white),
+                            obscureText: _obscureConfirmPassword,
                             decoration: InputDecoration(
                               labelText: 'Confirmar senha',
-                              prefixIcon: const Icon(Icons.lock_outlined,
-                                  color: Colors.white),
+                              prefixIcon: const Icon(Icons.lock_outlined, color: Colors.white),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _obscureConfirmPassword
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
+                                  _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
                                   color: Colors.white,
                                 ),
                                 onPressed: () {
                                   setState(() {
-                                    _obscureConfirmPassword =
-                                        !_obscureConfirmPassword;
+                                    _obscureConfirmPassword = !_obscureConfirmPassword;
                                   });
                                 },
                               ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: _confirmPasswordError
-                                      ? Colors.red
-                                      : Colors.white,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: _confirmPasswordError
-                                      ? Colors.red
-                                      : Colors.white,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: _confirmPasswordError
-                                      ? Colors.red
-                                      : Colors.black,
-                                  width: 2,
-                                ),
-                              ),
-                              labelStyle: TextStyle(
-                                color: _confirmPasswordError
-                                    ? Colors.red
-                                    : Colors.white70,
-                              ),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                              errorText: _confirmPasswordError ? 'As senhas não coincidem' : null,
                               filled: true,
-                              fillColor: Colors.white.withValues(alpha: 0.1),
-                              errorText: _confirmPasswordError &&
-                                      _confirmPasswordController.text.isNotEmpty
-                                  ? 'As senhas não coincidem'
-                                  : null,
+                              fillColor: Colors.white.withOpacity(0.1),
                             ),
-                            obscureText: _obscureConfirmPassword,
-                            onChanged: (value) {
-                              setState(() {
-                                _confirmPasswordError = value.isNotEmpty &&
-                                    value != _passwordController.text;
-                              });
-                            },
                           ),
                           const SizedBox(height: 24),
                           SizedBox(
@@ -347,12 +224,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                elevation: 2,
                               ),
-                              child: Text(
+                              child: const Text(
                                 'Cadastrar',
-                                style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                               ),
                             ),
                           ),
@@ -367,7 +242,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: Text(
                         'Já tem conta? Faça login',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: Colors.white.withOpacity(0.9),
                           fontSize: 16,
                         ),
                       ),
