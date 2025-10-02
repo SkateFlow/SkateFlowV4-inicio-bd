@@ -6,6 +6,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../main.dart';
 import '../services/skatepark_service.dart';
 import '../models/skatepark.dart';
+import '../theme/app_theme.dart';
+import '../widgets/skate_card.dart';
+import '../widgets/skate_app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -139,23 +142,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final nearbyParks = _getNearbyParks(allParks, 3);
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'SkateFlow',
-          style: TextStyle(fontWeight: FontWeight.w900),
-        ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF3888D2), Color(0xFF043C70)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-        foregroundColor: Colors.white,
-        elevation: 0,
+      appBar: SkateAppBar(
+        title: 'SkateFlow',
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
@@ -167,9 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.pushNamed(context, '/settings');
             },
           ),
-          const SizedBox(
-            width: 8,
-          ),
+          const SizedBox(width: 8),
         ],
       ),
       body: SingleChildScrollView(
@@ -249,102 +235,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: events.length,
                 itemBuilder: (context, index) {
                   final event = events[index];
-                  return GestureDetector(
+                  return EventCard(
+                    title: event['title'] as String,
+                    date: event['date'] as String,
+                    location: event['location'] as String,
+                    participants: event['participants'] as String,
                     onTap: () => _showEventDetails(context, event),
-                    child: Container(
-                      width: 320,
-                      margin: const EdgeInsets.only(right: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          width: 2,
-                          color: Colors.transparent,
-                        ),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF3888D2), Color(0xFF043C70)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                        ),
-                        child: Container(
-                          margin: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      event['title'] as String,
-                                      style: const TextStyle(
-                                        color: Colors.black87,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: const BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Color(0xFF3888D2),
-                                      Color(0xFF043C70)
-                                    ],
-                                  ),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8)),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(Icons.calendar_today,
-                                        color: Colors.white, size: 16),
-                                    const SizedBox(width: 6),
-                                    Text(event['date'] as String,
-                                        style: const TextStyle(
-                                            color: Colors.white)),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                children: [
-                                  const Icon(Icons.location_on,
-                                      color: Colors.black54, size: 18),
-                                  const SizedBox(width: 6),
-                                  Expanded(
-                                    child: Text(
-                                      event['location'] as String,
-                                      style: const TextStyle(
-                                          color: Colors.black54, fontSize: 15),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
                   );
                 },
               ),

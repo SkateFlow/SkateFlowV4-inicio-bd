@@ -6,7 +6,7 @@ import 'notifications_settings_screen.dart';
 import 'sound_vibration_settings_screen.dart';
 import 'help_screen.dart';
 import 'manage_account_screen.dart';
-import '../main.dart';
+
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -47,7 +47,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           ]),
           _buildSection('App', [
-            _buildThemeToggle(),
             _buildTile(Icons.notifications, 'Notificações',
                 () => _navigateTo(context, '/notifications')),
             _buildTile(Icons.volume_up, 'Som e vibração',
@@ -135,36 +134,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildThemeToggle() {
-    final themeProvider = ThemeProvider();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 150),
-      curve: Curves.easeInOut,
-      child: ListTile(
-        leading: Icon(
-          themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
-          color: isDark ? Colors.white70 : Colors.grey.shade700,
-        ),
-        title: Text(
-          'Tema escuro',
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        trailing: Switch(
-          value: themeProvider.isDarkMode,
-          onChanged: (value) {
-            setState(() {
-              themeProvider.toggleTheme();
-            });
-          },
-        ),
-      ),
-    );
-  }
 
   void _navigateTo(BuildContext context, String route) {
     Navigator.push(
