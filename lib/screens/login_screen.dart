@@ -39,8 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
 
-        // Exemplo: redireciona para a rota '/home' com o usuário
-        Navigator.pushReplacementNamed(context, '/home', arguments: usuario);
+        // Exemplo: redireciona para a rota '/main' com o usuário
+        Navigator.pushReplacementNamed(context, '/main', arguments: usuario);
       } else {
         // ❌ Credenciais inválidas
         ScaffoldMessenger.of(context).showSnackBar(

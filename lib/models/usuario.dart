@@ -1,5 +1,5 @@
 class Usuario {
-  final String? id; // 🔹 id agora é opcional
+  final int? id; // 🔹 id agora é um inteiro opcional
   final String nome;
   final String email;
   final String? senha; // opcional para casos de retorno do backend
@@ -17,7 +17,7 @@ class Usuario {
 
   Map<String, dynamic> toMap() {
     return {
-      if (id != null) 'id': id, // só envia se existir
+      if (id != null) 'id': id.toString(), // Envia o id como string caso exista
       'nome': nome,
       'email': email,
       'senha': senha,
@@ -28,7 +28,7 @@ class Usuario {
 
   factory Usuario.fromMap(Map<String, dynamic> map) {
     return Usuario(
-      id: map['id'],
+      id: map['id'] != null ? map['id'] as int? : null, // Recebe id como inteiro
       nome: map['nome'] ?? '',
       email: map['email'] ?? '',
       senha: map['senha'],
